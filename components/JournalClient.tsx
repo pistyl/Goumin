@@ -91,7 +91,7 @@ export default function JournalClient({ user, entries, dailyPrompt }: JournalCli
       const res = await createJournalEntryAction(dailyPrompt, content, moodScore);
       if (res?.error) {
         if (res.error === 'limit_reached') {
-          setErrorMessage(res.message);
+          setErrorMessage(res.message || 'Limite atteinte');
         } else {
           setErrorMessage(res.error);
         }
