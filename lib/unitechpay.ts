@@ -48,8 +48,16 @@ export async function createPaymentRequest(
 
   // Callback URL de l'application
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const callbackSuccessUrl = `${appUrl}/pro/success?userId=${userId}&method=${method}`;
-  const callbackCancelUrl = `${appUrl}/pro`;
+  
+  // Wave exige impérativement des URLs de callback publiques en HTTPS.
+  // Si nous sommes en local (localhost), on utilise un domaine HTTPS factice pour l'enregistrement.
+  let callbackBaseUrl = appUrl;
+  if (appUrl.startsWith('http://localhost') || appUrl.startsWith('http://127.0.0.1')) {
+    callbackBaseUrl = 'https://goumin.sn';
+  }
+
+  const callbackSuccessUrl = `${callbackBaseUrl}/pro/success?userId=${userId}&method=${method}`;
+  const callbackCancelUrl = `${callbackBaseUrl}/pro`;
 
   // Si on est en mode test/simulation, on évite d'appeler l'API de prod et on simule un succès immédiat
   if (API_KEY === 'test_unitech_api_key_goumin') {
