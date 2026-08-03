@@ -56,6 +56,9 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
   const [reportingCommentId, setReportingCommentId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState('');
 
+  // Partage
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
   const handleCreateComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentContent.trim()) return;
@@ -85,6 +88,31 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
       await toggleReactionAction(post.id);
       router.refresh();
     });
+  };
+
+  const handleShare = async (postId: string) => {
+    const shareUrl = `${window.location.origin}/post/${postId}`;
+    const shareData = {
+      title: 'Goumin',
+      text: 'Découvre cette publication sur Goumin, l\'espace d\'entraide et soutien deuil amoureux',
+      url: shareUrl
+    };
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Erreur lors du partage :', err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setToastMessage('Lien de la publication copié !');
+        setTimeout(() => setToastMessage(null), 3000);
+      } catch (err) {
+        console.error('Erreur de copie dans le presse-papier :', err);
+      }
+    }
   };
 
   const handleTogglePassedHere = (commentId: string) => {
@@ -262,6 +290,39 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
               </svg>
             )}
             <span>{post.reaction_count}</span>
+          </button>
+
+          {/* Partager */}
+          <button 
+            onClick={() => handleShare(post.id)}
+            title="Partager"
+            style={{
+              background: 'none',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-muted)',
+              borderRadius: '20px',
+              padding: '6px 14px',
+              fontSize: '12px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = 'var(--primary)';
+              e.currentTarget.style.color = 'var(--primary)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border-color)';
+              e.currentTarget.style.color = 'var(--text-muted)';
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+              <polyline points="16 6 12 2 8 6"></polyline>
+              <line x1="12" y1="2" x2="12" y2="15"></line>
+            </svg>
           </button>
         </div>
       </div>
@@ -457,6 +518,32 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
         </form>
       </div>
 
+
+      {toastMessage && (
+        <div style={{
+          position: 'fixed',
+          bottom: '120px', /* slightly higher due to sticky input bar */
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(17, 24, 39, 0.95)',
+          color: '#fff',
+          padding: '10px 20px',
+          borderRadius: '24px',
+          border: '1px solid var(--border-color)',
+          fontSize: '13px',
+          fontWeight: '500',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }

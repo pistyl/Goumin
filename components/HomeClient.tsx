@@ -53,6 +53,9 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
   const [reportingPostId, setReportingPostId] = useState<string | null>(null);
   const [reportReason, setReportReason] = useState('');
 
+  // Partage
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
   // Création de cercle privé (Pro)
   const [showCreateCircle, setShowCreateCircle] = useState(false);
   const [newCircleName, setNewCircleName] = useState('');
@@ -103,6 +106,31 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
         alert(res.error || 'Erreur lors du signalement.');
       }
     });
+  };
+
+  const handleShare = async (postId: string) => {
+    const shareUrl = `${window.location.origin}/post/${postId}`;
+    const shareData = {
+      title: 'Goumin',
+      text: 'Découvre cette publication sur Goumin, l\'espace d\'entraide et soutien deuil amoureux',
+      url: shareUrl
+    };
+
+    if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error('Erreur lors du partage :', err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setToastMessage('Lien de la publication copié !');
+        setTimeout(() => setToastMessage(null), 3000);
+      } catch (err) {
+        console.error('Erreur de copie dans le presse-papier :', err);
+      }
+    }
   };
 
   const handleCreateCircle = (e: React.FormEvent) => {
@@ -480,72 +508,61 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                     <span>{post.comment_count}</span>
                   </a>
 
-                  {/* Signalement */}
+                  {/* Partager */}
                   <button 
-                    onClick={() => setReportingPostId(reportingPostId === post.id ? null : post.id)}
-                    title="Signaler"
+                    onClick={() => handleShare(post.id)}
+                    title="Partager"
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: 'rgba(239, 68, 68, 0.6)',
+                      color: 'var(--text-muted)',
                       fontSize: '12px',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '4px',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      transition: 'color 0.2s ease'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--primary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                      <line x1="12" y1="9" x2="12" y2="13"></line>
-                      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                      <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                      <polyline points="16 6 12 2 8 6"></polyline>
+                      <line x1="12" y1="2" x2="12" y2="15"></line>
                     </svg>
                   </button>
                 </div>
-
-                {/* Formulaire de signalement repliable */}
-                {isPostReporting && (
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '8px',
-                    padding: '10px',
-                    borderRadius: '8px',
-                    background: 'rgba(239, 68, 68, 0.05)',
-                    border: '1px solid rgba(239, 68, 68, 0.15)',
-                    marginTop: '4px'
-                  }}>
-                    <input 
-                      type="text" 
-                      placeholder="Pourquoi signales-tu ce post ? (ex: insulte, pub, hors sujet...)" 
-                      className="input-field"
-                      style={{ padding: '8px', fontSize: '12px' }}
-                      value={reportReason}
-                      onChange={(e) => setReportReason(e.target.value)}
-                    />
-                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                      <button 
-                        className="btn" 
-                        style={{ padding: '6px 12px', fontSize: '11px', background: 'transparent', color: 'var(--text-muted)' }}
-                        onClick={() => setReportingPostId(null)}
-                      >
-                        Annuler
-                      </button>
-                      <button 
-                        className="btn" 
-                        style={{ padding: '6px 12px', fontSize: '11px', background: '#ef4444', color: '#fff', width: 'auto' }}
-                        onClick={() => handleReport(post.id)}
-                      >
-                        Confirmer le signalement
-                      </button>
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })
         )}
       </div>
+      {toastMessage && (
+        <div style={{
+          position: 'fixed',
+          bottom: '80px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(17, 24, 39, 0.95)',
+          color: '#fff',
+          padding: '10px 20px',
+          borderRadius: '24px',
+          border: '1px solid var(--border-color)',
+          fontSize: '13px',
+          fontWeight: '500',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          {toastMessage}
+        </div>
+      )}
     </div>
   );
 }
