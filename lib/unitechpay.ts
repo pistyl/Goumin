@@ -2,8 +2,8 @@ import crypto from 'crypto';
 import { db } from './db';
 
 const API_KEY = process.env.UNITECHPAY_API_KEY || 'test_unitech_api_key_goumin';
-const WEBHOOK_SECRET = process.env.UNITECHPAY_WEBHOOK_SECRET || 'test_unitech_api_key_goumin';
-const API_URL = 'https://api.unitech.sn/api.php';
+const WEBHOOK_SECRET = process.env.UNITECHPAY_WEBHOOK_SECRET || process.env.UNITECHPAY_API_KEY || 'test_unitech_api_key_goumin';
+const API_URL = 'https://api.unitech.sn/api';
 
 export interface UnitechPayPaymentResponse {
   success: boolean;
@@ -28,7 +28,11 @@ export function generateHmacSignature(payload: string, secret: string): string {
 export function verifyWebhookSignature(rawBody: string, signature: string): boolean {
   if (!signature) return false;
   const expected = generateHmacSignature(rawBody, WEBHOOK_SECRET);
-  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  try {
+    return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature));
+  } catch (err) {
+    return false;
+  }
 }
 
 /**
@@ -44,19 +48,8 @@ export async function createPaymentRequest(
 
   // Callback URL de l'application
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-  const callbackUrl = `${appUrl}/api/webhook/unitechpay`;
-
-  const payload = {
-    action: 'cash-in',
-    api_key: API_KEY,
-    amount,
-    currency: 'XOF',
-    method,
-    phone,
-    transaction_id: transactionId,
-    callback_url: callbackUrl,
-    metadata: { userId }
-  };
+  const callbackSuccessUrl = `${appUrl}/pro/success?userId=${userId}&method=${method}`;
+  const callbackCancelUrl = `${appUrl}/pro`;
 
   // Si on est en mode test/simulation, on évite d'appeler l'API de prod et on simule un succès immédiat
   if (API_KEY === 'test_unitech_api_key_goumin') {
@@ -67,8 +60,23 @@ export async function createPaymentRequest(
     };
   }
 
+  // Déterminer l'action API selon la méthode de paiement
+  const action = method === 'wave' ? 'create_wave_payment' : 'create_orange_om';
+  const url = `${API_URL}?action=${action}`;
+
+  // Formater le numéro de téléphone en enlevant le code pays ou espaces si nécessaire (ex: "771234567")
+  const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-9);
+
+  const payload = {
+    amount,
+    customer_number: cleanPhone,
+    description: 'Abonnement Goumin Pro',
+    callback_success: callbackSuccessUrl,
+    callback_cancel: callbackCancelUrl
+  };
+
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -78,11 +86,24 @@ export async function createPaymentRequest(
     });
 
     const data = await res.json();
-    if (data.success) {
+    if (data.success && data.data) {
+      const payRef = data.data.reference || String(data.data.transaction_id);
+
+      // Pré-insérer un abonnement au statut 'pending' lié à la référence du paiement pour le webhook
+      try {
+        await db.query(
+          `INSERT INTO subscriptions (user_id, payment_method, status, unitech_payment_id, amount, starts_at, ends_at) 
+           VALUES ($1, $2, 'pending', $3, $4, NOW(), NOW() + INTERVAL '30 days')`,
+          [userId, method, payRef, amount]
+        );
+      } catch (dbErr) {
+        console.error('Failed to pre-insert pending subscription:', dbErr);
+      }
+
       return {
         success: true,
-        transaction_id: data.transaction_id,
-        payment_url: data.payment_url
+        transaction_id: payRef,
+        payment_url: data.data.payment_url
       };
     } else {
       return {
