@@ -149,7 +149,7 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: '90px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingBottom: 'calc(130px + env(safe-area-inset-bottom))' }}>
       
       {/* Alerte de crise */}
       {crisisAlert && crisisAlert.show && (
@@ -468,7 +468,7 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
       {/* Composer de message en bas d'écran (Sticky / Message Bar) */}
       <div style={{
         position: 'fixed',
-        bottom: '68px', /* Juste au dessus de la bottom nav */
+        bottom: 'calc(68px + env(safe-area-inset-bottom))', /* Juste au dessus de la bottom nav avec safe area */
         left: '50%',
         transform: 'translateX(-50%)',
         width: '100%',
@@ -477,6 +477,7 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
         backdropFilter: 'blur(10px)',
         borderTop: '1px solid var(--border-color)',
         padding: '10px 16px',
+        paddingBottom: 'calc(10px + env(safe-area-inset-bottom))', /* padding supplémentaire pour le deuil à une main */
         zIndex: 90,
         boxShadow: '0 -4px 20px rgba(0,0,0,0.5)'
       }}>
@@ -522,7 +523,7 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
       {toastMessage && (
         <div style={{
           position: 'fixed',
-          bottom: '120px', /* slightly higher due to sticky input bar */
+          bottom: 'calc(120px + env(safe-area-inset-bottom))', /* slightly higher due to sticky input bar */
           left: '50%',
           transform: 'translateX(-50%)',
           background: 'rgba(17, 24, 39, 0.95)',

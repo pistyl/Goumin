@@ -541,7 +541,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
       {toastMessage && (
         <div style={{
           position: 'fixed',
-          bottom: '80px',
+          bottom: 'calc(80px + env(safe-area-inset-bottom))',
           left: '50%',
           transform: 'translateX(-50%)',
           background: 'rgba(17, 24, 39, 0.95)',

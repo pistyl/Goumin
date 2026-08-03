@@ -59,13 +59,14 @@ body {
   flex-direction: column;
   position: relative;
   box-shadow: 0 0 45px rgba(0, 0, 0, 0.85);
-  padding-bottom: 84px; /* Espace pour la barre du bas */
+  padding-bottom: calc(84px + env(safe-area-inset-bottom)); /* Espace pour la barre du bas avec marge safe area */
   transition: background 0.3s ease;
 }
 
 /* En-tête */
 header {
   padding: 16px 20px;
+  padding-top: calc(16px + env(safe-area-inset-top)); /* Support pour les encoches (notches) */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -95,7 +96,8 @@ header {
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  height: 68px;
+  height: calc(68px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom); /* Ajustement pour la barre d'accueil iPhone/Android */
   background: rgba(7, 6, 15, 0.92);
   backdrop-filter: blur(20px);
   border-top: 1px solid var(--border-color);
@@ -140,7 +142,7 @@ header {
 /* Floating SOS Button */
 .sos-float-btn {
   position: fixed;
-  bottom: 84px;
+  bottom: calc(84px + env(safe-area-inset-bottom)); /* Décalage pour ne pas gêner la bottom nav */
   right: 20px;
   width: 56px;
   height: 56px;
