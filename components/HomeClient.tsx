@@ -428,6 +428,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                   {/* Réaction principale "Passé·e par là" */}
                   <button 
                     onClick={() => handleReact(post.id)}
+                    title="Passé·e par là"
                     style={{
                       background: post.user_reacted ? 'rgba(236, 72, 153, 0.1)' : 'transparent',
                       border: '1px solid ' + (post.user_reacted ? 'var(--secondary)' : 'var(--border-color)'),
@@ -452,13 +453,14 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                         <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
                       </svg>
                     )}
-                    <span>Passé·e par là ({post.reaction_count})</span>
+                    <span>{post.reaction_count}</span>
                   </button>
 
                   {/* Commentaires */}
                   <a 
                     href={`/post/${post.id}`}
                     onClick={(e) => { e.preventDefault(); router.push(`/post/${post.id}`); }}
+                    title="Commentaires"
                     style={{
                       color: 'var(--text-muted)',
                       textDecoration: 'none',
@@ -475,12 +477,13 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
                     </svg>
-                    <span>Commentaires ({post.comment_count})</span>
+                    <span>{post.comment_count}</span>
                   </a>
 
                   {/* Signalement */}
                   <button 
                     onClick={() => setReportingPostId(reportingPostId === post.id ? null : post.id)}
+                    title="Signaler"
                     style={{
                       background: 'none',
                       border: 'none',
@@ -497,7 +500,6 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                       <line x1="12" y1="9" x2="12" y2="13"></line>
                       <line x1="12" y1="17" x2="12.01" y2="17"></line>
                     </svg>
-                    <span>Signaler</span>
                   </button>
                 </div>
 
