@@ -542,8 +542,10 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
         <div style={{
           position: 'fixed',
           bottom: 'calc(80px + env(safe-area-inset-bottom))',
-          left: '50%',
-          transform: 'translateX(-50%)',
+          left: 0,
+          right: 0,
+          margin: '0 auto',
+          width: 'max-content',
           background: 'rgba(17, 24, 39, 0.95)',
           color: '#fff',
           padding: '10px 20px',

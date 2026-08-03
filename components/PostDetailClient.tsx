@@ -469,8 +469,9 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
       <div style={{
         position: 'fixed',
         bottom: 'calc(68px + env(safe-area-inset-bottom))', /* Juste au dessus de la bottom nav avec safe area */
-        left: '50%',
-        transform: 'translateX(-50%)',
+        left: 0,
+        right: 0,
+        margin: '0 auto',
         width: '100%',
         maxWidth: '480px',
         background: 'rgba(10, 9, 21, 0.95)',
@@ -524,8 +525,10 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
         <div style={{
           position: 'fixed',
           bottom: 'calc(120px + env(safe-area-inset-bottom))', /* slightly higher due to sticky input bar */
-          left: '50%',
-          transform: 'translateX(-50%)',
+          left: 0,
+          right: 0,
+          margin: '0 auto',
+          width: 'max-content',
           background: 'rgba(17, 24, 39, 0.95)',
           color: '#fff',
           padding: '10px 20px',
