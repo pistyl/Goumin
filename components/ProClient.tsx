@@ -8,6 +8,82 @@ interface ProClientProps {
   user: User;
 }
 
+// Icônes SVG modernes
+const CrownIcon = ({ className, size = 56 }: { className?: string; size?: number }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+    style={{ color: '#fbbf24' }}
+  >
+    <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7z" />
+    <path d="M5 20h14" />
+  </svg>
+);
+
+const BookOpenIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24' }}>
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+  </svg>
+);
+
+const ChartIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24' }}>
+    <line x1="18" y1="20" x2="18" y2="10" />
+    <line x1="12" y1="20" x2="12" y2="4" />
+    <line x1="6" y1="20" x2="6" y2="14" />
+  </svg>
+);
+
+const LockIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24' }}>
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+  </svg>
+);
+
+const ShieldIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24' }}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+  </svg>
+);
+
+const WaveIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#60a5fa' }}>
+    <path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.5 0 2.5 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+    <path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.5 0 2.5 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+  </svg>
+);
+
+const OrangeIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fb923c' }}>
+    <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+    <line x1="12" y1="18" x2="12.01" y2="18" />
+  </svg>
+);
+
+const CreditCardIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}>
+    <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+    <line x1="1" y1="10" x2="23" y2="10" />
+  </svg>
+);
+
+const SparklesIcon = () => (
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24', margin: '0 auto 14px' }}>
+    <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z" />
+    <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5Z" />
+    <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1Z" />
+  </svg>
+);
+
 export default function ProClient({ user }: ProClientProps) {
   const [method, setMethod] = useState<'wave' | 'om'>('wave');
   const [phone, setPhone] = useState(user.identifier || '');
@@ -25,7 +101,6 @@ export default function ProClient({ user }: ProClientProps) {
       if (res?.error) {
         setError(res.error);
       } else if (res?.paymentUrl) {
-        // Rediriger vers l'interface de paiement UnitechPay
         window.location.href = res.paymentUrl;
       }
     });
@@ -33,22 +108,22 @@ export default function ProClient({ user }: ProClientProps) {
 
   const proFeatures = [
     {
-      icon: '✍️',
+      icon: <BookOpenIcon />,
       title: 'Journal intime illimité',
       desc: 'Écris toutes tes pensées sans restriction. Version gratuite limitée à 1 par jour.',
     },
     {
-      icon: '📊',
+      icon: <ChartIcon />,
       title: "Statistiques & Suivi d'humeur",
       desc: "Accède à des graphiques détaillés pour suivre ta guérison émotionnelle jour après jour.",
     },
     {
-      icon: '🔒',
+      icon: <LockIcon />,
       title: 'Création de cercles privés',
       desc: 'Partage et entraide-toi dans des bulles intimes réservées uniquement aux membres invités.',
     },
     {
-      icon: '👑',
+      icon: <ShieldIcon />,
       title: 'Badge officiel Pro',
       desc: 'Affiche fièrement ton statut doré à côté de ton pseudo sur toute la plateforme.',
     },
@@ -154,9 +229,9 @@ export default function ProClient({ user }: ProClientProps) {
       <div className="pro-container" style={{ display: 'flex', flexDirection: 'column', gap: '26px' }}>
         
         {/* Header Premium */}
-        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div className="crown-animate" style={{ fontSize: '56px', lineHeight: '1', display: 'inline-block' }}>
-            👑
+        <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <div className="crown-animate" style={{ display: 'inline-block' }}>
+            <CrownIcon size={64} />
           </div>
           <h2 style={{ 
             fontFamily: 'var(--font-title)', 
@@ -184,7 +259,7 @@ export default function ProClient({ user }: ProClientProps) {
             borderRadius: '24px',
             boxShadow: '0 15px 40px rgba(0,0,0,0.5)'
           }}>
-            <span style={{ fontSize: '48px', display: 'block', marginBottom: '14px' }}>✨</span>
+            <SparklesIcon />
             <strong style={{ fontSize: '20px', color: '#fbbf24', display: 'block', marginBottom: '10px', fontFamily: 'var(--font-title)' }}>
               Accès Pro Activé !
             </strong>
@@ -200,7 +275,6 @@ export default function ProClient({ user }: ProClientProps) {
               {proFeatures.map((feat, idx) => (
                 <div key={idx} className="feature-card animate-fade-in" style={{ animationDelay: `${idx * 0.08}s` }}>
                   <div style={{ 
-                    fontSize: '24px', 
                     background: 'rgba(255, 255, 255, 0.04)', 
                     width: '48px', 
                     height: '48px', 
@@ -267,7 +341,7 @@ export default function ProClient({ user }: ProClientProps) {
                     onClick={() => setMethod('wave')}
                     className={`payment-tab wave ${method === 'wave' ? 'active' : ''}`}
                   >
-                    <span style={{ fontSize: '20px' }}>🌊</span>
+                    <WaveIcon />
                     Wave
                   </button>
                   <button
@@ -275,7 +349,7 @@ export default function ProClient({ user }: ProClientProps) {
                     onClick={() => setMethod('om')}
                     className={`payment-tab om ${method === 'om' ? 'active' : ''}`}
                   >
-                    <span style={{ fontSize: '20px' }}>🍊</span>
+                    <OrangeIcon />
                     Orange Money
                   </button>
                 </div>
@@ -318,10 +392,10 @@ export default function ProClient({ user }: ProClientProps) {
                     Initialisation...
                   </>
                 ) : (
-                  <>
-                    <span>🚀</span>
-                    S'abonner via {method === 'wave' ? 'Wave' : 'Orange Money'}
-                  </>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CreditCardIcon />
+                    <span>S'abonner via {method === 'wave' ? 'Wave' : 'Orange Money'}</span>
+                  </div>
                 )}
               </button>
               
