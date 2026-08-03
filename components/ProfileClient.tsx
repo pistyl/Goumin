@@ -309,7 +309,7 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
               type="text" 
               placeholder="Ex: +221771234567" 
               className="input-field"
-              style={{ padding: '10px 12px', fontSize: '13px' }}
+              style={{ padding: '10px 12px', fontSize: '16px' }}
               value={trustContact}
               onChange={(e) => setTrustContact(e.target.value)}
             />

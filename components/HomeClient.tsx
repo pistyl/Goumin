@@ -275,7 +275,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
             <label style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Cercle :</label>
             <select 
               className="input-field custom-select" 
-              style={{ width: 'auto', padding: '6px 32px 6px 12px', fontSize: '13px', borderRadius: '10px' }}
+              style={{ width: 'auto', padding: '6px 32px 6px 12px', fontSize: '16px', borderRadius: '10px' }}
               value={targetCircle}
               onChange={(e) => setTargetCircle(e.target.value)}
             >
@@ -337,7 +337,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
               type="text" 
               placeholder="Nom du cercle (ex: Relation toxique, L'oublier)" 
               className="input-field" 
-              style={{ padding: '8px 12px', fontSize: '13px' }}
+              style={{ padding: '8px 12px', fontSize: '16px' }}
               value={newCircleName}
               onChange={(e) => setNewCircleName(e.target.value)}
               required
@@ -346,7 +346,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
               type="text" 
               placeholder="Description courte..." 
               className="input-field" 
-              style={{ padding: '8px 12px', fontSize: '13px' }}
+              style={{ padding: '8px 12px', fontSize: '16px' }}
               value={newCircleDesc}
               onChange={(e) => setNewCircleDesc(e.target.value)}
               required

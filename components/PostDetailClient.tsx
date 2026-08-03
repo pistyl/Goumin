@@ -437,7 +437,7 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
                       type="text" 
                       placeholder="Raison du signalement..." 
                       className="input-field"
-                      style={{ padding: '6px', fontSize: '11px' }}
+                      style={{ padding: '6px', fontSize: '16px' }}
                       value={reportReason}
                       onChange={(e) => setReportReason(e.target.value)}
                     />
@@ -486,7 +486,7 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
             type="text" 
             placeholder="Écris un message de soutien..." 
             className="input-field"
-            style={{ borderRadius: '24px', padding: '10px 16px', fontSize: '13px' }}
+            style={{ borderRadius: '24px', padding: '10px 16px', fontSize: '16px' }}
             value={commentContent}
             onChange={(e) => setCommentContent(e.target.value)}
             required
