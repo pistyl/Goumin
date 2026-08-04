@@ -41,9 +41,13 @@ let dbInitialized = false;
 async function ensureDatabaseInitialized() {
   if (dbInitialized) return;
 
+  const client = await pool.connect();
   try {
+    // Verrou advisory session lock pour éviter les collisions DDL lors des compilations Next.js concurrentes
+    await client.query('SELECT pg_advisory_lock(140283);');
+
     // Vérifier si la table users existe dans le schéma public
-    const checkRes = await pool.query(`
+    const checkRes = await client.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
         WHERE table_schema = 'public' 
@@ -56,7 +60,7 @@ async function ensureDatabaseInitialized() {
       console.log('Goumin : Initialisation automatique du schéma dans le schéma public...');
       
       // Exécution de l'initialisation DDL
-      await pool.query(`
+      await client.query(`
         CREATE TABLE IF NOT EXISTS users (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
           username VARCHAR(50) UNIQUE NOT NULL,
@@ -143,9 +147,9 @@ async function ensureDatabaseInitialized() {
       `);
 
       // Seed des cercles par défaut
-      const circlesCheck = await pool.query(`SELECT COUNT(*) FROM circles`);
+      const circlesCheck = await client.query(`SELECT COUNT(*) FROM circles`);
       if (parseInt(circlesCheck.rows[0].count) === 0) {
-        await pool.query(`
+        await client.query(`
           INSERT INTO circles (id, name, description) VALUES
           ('rupture-recente', 'Rupture récente', 'Pour ceux qui viennent de traverser le choc de la séparation et ont besoin de vider leur sac.'),
           ('je-rechute', 'Je rechute', 'Ce moment difficile où tu es à deux doigts de contacter ton ex malgré tes promesses. Parlons-en d''abord.'),
@@ -155,9 +159,9 @@ async function ensureDatabaseInitialized() {
       }
 
       // Seed des soldes marchands
-      const balanceCheck = await pool.query(`SELECT COUNT(*) FROM merchant_balances`);
+      const balanceCheck = await client.query(`SELECT COUNT(*) FROM merchant_balances`);
       if (parseInt(balanceCheck.rows[0].count) === 0) {
-        await pool.query(`
+        await client.query(`
           INSERT INTO merchant_balances (id, balance) VALUES
           ('sold_wave', 0),
           ('sold_om', 0)
@@ -166,9 +170,62 @@ async function ensureDatabaseInitialized() {
 
       console.log('Goumin : Base de données initialisée avec succès par auto-démarrage.');
     }
+
+    // Idempotent migrations for admin and new features
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS admins (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS admin_logs (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        admin_id UUID REFERENCES admins(id) ON DELETE SET NULL,
+        action VARCHAR(100) NOT NULL,
+        details TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS pro_contents (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        type VARCHAR(50) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        content TEXT,
+        audio_url VARCHAR(255),
+        publish_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+      );
+
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) NOT NULL DEFAULT 'active';
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS suspended_until TIMESTAMP WITH TIME ZONE;
+      ALTER TABLE users ADD COLUMN IF NOT EXISTS warning_count INTEGER NOT NULL DEFAULT 0;
+
+      ALTER TABLE posts ADD COLUMN IF NOT EXISTS is_pinned BOOLEAN NOT NULL DEFAULT FALSE;
+
+      ALTER TABLE circles ADD COLUMN IF NOT EXISTS emoji VARCHAR(20) NOT NULL DEFAULT '💬';
+      ALTER TABLE circles ADD COLUMN IF NOT EXISTS display_order INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE circles ADD COLUMN IF NOT EXISTS is_archived BOOLEAN NOT NULL DEFAULT FALSE;
+    `);
+
+    // Seed default admin (admin / admin123)
+    const adminCheck = await client.query("SELECT COUNT(*) FROM admins WHERE username = 'admin'");
+    if (parseInt(adminCheck.rows[0].count) === 0) {
+      const bcrypt = require('bcryptjs');
+      const hash = await bcrypt.hash('admin123', 10);
+      await client.query("INSERT INTO admins (username, password_hash) VALUES ($1, $2)", ['admin', hash]);
+      console.log('Goumin : Compte administrateur par défaut (admin/admin123) créé.');
+    }
+
     dbInitialized = true;
   } catch (error) {
     console.error('Goumin : Échec de l\'auto-initialisation de la base de données :', error);
+  } finally {
+    try {
+      await client.query('SELECT pg_advisory_unlock(140283);');
+    } catch {}
+    client.release();
   }
 }
 

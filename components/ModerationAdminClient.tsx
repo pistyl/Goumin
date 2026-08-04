@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { adminResolveReportAction } from '@/app/actions';
+import { adminResolveReportAction } from '@/app/adminActions';
+import { checkSensitiveContent } from '@/lib/moderation';
 
 interface Report {
   id: string;
-  reporter_username: string | null;
+  reporter_username: string;
   post_id: string | null;
   comment_id: string | null;
   reason: string;
@@ -14,245 +15,403 @@ interface Report {
   created_at: string;
   post_content: string | null;
   comment_content: string | null;
-  author_username: string | null;
+  author_username: string;
+  author_id: string | null;
+  author_previous_reports_count: number;
 }
 
 interface ModerationAdminClientProps {
   reports: Report[];
+  adminUsername: string;
 }
 
-export default function ModerationAdminClient({ reports }: ModerationAdminClientProps) {
+export default function ModerationAdminClient({ reports, adminUsername }: ModerationAdminClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [activeTab, setActiveTab] = useState<'community' | 'auto_detect'>('community');
+  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
+  const [suspensionDays, setSuspensionDays] = useState<number>(7);
 
-  const handleResolve = (reportId: string, action: 'approve' | 'block') => {
-    if (!confirm(`Confirmer l'action : ${action === 'approve' ? 'Approuver le contenu' : 'Bloquer le contenu'} ?`)) {
+  const handleResolve = (
+    reportId: string,
+    action: 'dismiss' | 'block' | 'warn' | 'suspend' | 'ban',
+    days?: number
+  ) => {
+    let actionLabel = '';
+    switch (action) {
+      case 'dismiss': actionLabel = 'Ignorer le signalement'; break;
+      case 'block': actionLabel = 'Supprimer le contenu'; break;
+      case 'warn': actionLabel = 'Avertir l\'utilisateur'; break;
+      case 'suspend': actionLabel = `Suspendre l'utilisateur (${days || 7} jours)`; break;
+      case 'ban': actionLabel = 'Bannir l\'utilisateur définitivement'; break;
+    }
+
+    if (!confirm(`Confirmer l'action : ${actionLabel} ?`)) {
       return;
     }
 
     startTransition(async () => {
-      const res = await adminResolveReportAction(reportId, action);
+      const res = await adminResolveReportAction(reportId, action, days);
       if (res?.error) {
         alert(res.error);
       } else {
+        setSelectedReportId(null);
         router.refresh();
       }
     });
   };
 
+  // Process and sort reports
   const pendingReports = reports.filter(r => r.status === 'pending');
   const processedReports = reports.filter(r => r.status !== 'pending');
 
+  const enhancedPending = pendingReports.map(report => {
+    const content = report.post_content || report.comment_content || '';
+    const isSensitive = checkSensitiveContent(content) || report.reason.includes('Dépistage');
+    return { ...report, isSensitive, content };
+  });
+
+  // Sort: sensitive/crisis reports float to the absolute top
+  const sortedPending = enhancedPending.sort((a, b) => {
+    if (a.isSensitive && !b.isSensitive) return -1;
+    if (!a.isSensitive && b.isSensitive) return 1;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+
+  // Separate into Community reports and Auto-Detected reports
+  const communityReports = sortedPending.filter(r => !r.reason.includes('Dépistage') && r.reporter_username !== 'Système');
+  const autoDetectReports = sortedPending.filter(r => r.reason.includes('Dépistage') || r.reporter_username === 'Système');
+
+  const displayReports = activeTab === 'community' ? communityReports : autoDetectReports;
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', paddingBottom: '30px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '26px' }}>
       
-      <div>
-        <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '24px', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span>File de modération</span>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-          </svg>
-        </h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '4px' }}>
-          Examine les publications et commentaires signalés par la communauté ou détectés automatiquement.
-        </p>
-      </div>
-
-      {/* Signalements en attente */}
-      <div>
-        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '16px', fontWeight: '700', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          En attente de traitement ({pendingReports.length})
-        </h3>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-          {pendingReports.length === 0 ? (
-            <div className="card" style={{ textAlign: 'center', padding: '30px', color: 'var(--text-muted)', fontSize: '13px' }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block', margin: '0 auto 10px auto', opacity: 0.4 }}>
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-              Aucun contenu à modérer. La communauté se porte bien !
-            </div>
-          ) : (
-            pendingReports.map(report => {
-              const isPost = !!report.post_id;
-              const content = isPost ? report.post_content : report.comment_content;
-              const typeLabel = isPost ? 'PUBLICATION' : 'COMMENTAIRE';
-
-              return (
-                <div 
-                  key={report.id} 
-                  className="card"
-                  style={{
-                    borderLeft: '4px solid #ef4444',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '10px'
-                  }}
-                >
-                  {/* Metadata */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', flexWrap: 'wrap', gap: '6px' }}>
-                    <span style={{ fontWeight: 'bold', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', padding: '2px 6px', borderRadius: '4px' }}>
-                      {typeLabel}
-                    </span>
-                    <span style={{ color: 'var(--text-muted)' }}>
-                      Signalé par : <strong>{report.reporter_username || 'Système'}</strong>
-                    </span>
-                    <span style={{ color: 'var(--text-muted)' }}>
-                      Date : {new Date(report.created_at).toLocaleString('fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-
-                  {/* Motif */}
-                  <div style={{
-                    padding: '8px 10px',
-                    borderRadius: '8px',
-                    background: 'rgba(239, 68, 68, 0.05)',
-                    border: '1px solid rgba(239, 68, 68, 0.1)',
-                    fontSize: '12px',
-                    lineHeight: '1.4'
-                  }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', marginRight: '4px', verticalAlign: 'middle' }}>
-                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                    </svg>
-                    <strong>Motif :</strong> {report.reason}
-                  </div>
-
-                  {/* Contenu signalé */}
-                  <div style={{ padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.01)', border: '1px solid var(--border-color)' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px' }}>
-                      Auteur : 
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'inline-block', margin: '0 4px', verticalAlign: 'middle' }}>
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                      </svg>
-                      {report.author_username || 'Anonyme'}
-                    </div>
-                    <p style={{ fontSize: '13px', color: 'var(--text-main)', fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>
-                      "{content}"
-                    </p>
-                  </div>
-
-                  {/* Actions de modération */}
-                  <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
-                    <button
-                      onClick={() => handleResolve(report.id, 'approve')}
-                      disabled={isPending}
-                      className="btn"
-                      style={{
-                        flex: 1,
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid var(--sos-primary)',
-                        color: 'var(--sos-primary)',
-                        padding: '8px',
-                        fontSize: '12px',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px'
-                      }}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                      <span>Approuver</span>
-                    </button>
-                    <button
-                      onClick={() => handleResolve(report.id, 'block')}
-                      disabled={isPending}
-                      className="btn"
-                      style={{
-                        flex: 1,
-                        background: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid #ef4444',
-                        color: '#f87171',
-                        padding: '8px',
-                        fontSize: '12px',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px'
-                      }}
-                    >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
-                      </svg>
-                      <span>Bloquer</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })
-          )}
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '28px', fontWeight: '800' }}>File de modération</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', marginTop: '4px' }}>
+            Traite les contenus signalés et assure la sécurité émotionnelle des utilisateurs.
+          </p>
         </div>
       </div>
 
-      {/* Historique des signalements traités */}
-      <div style={{ marginTop: '10px' }}>
-        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '16px', fontWeight: '700', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
-          </svg>
-          Signalements résolus ({processedReports.length})
-        </h3>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {processedReports.length === 0 ? (
-            <p style={{ color: 'var(--text-muted)', fontSize: '12px', textAlign: 'center', padding: '16px' }}>Aucun signalement résolu pour l'instant.</p>
-          ) : (
-            processedReports.map(report => (
-              <div 
-                key={report.id} 
-                className="card"
+      {/* Tabs Menu */}
+      <div style={{ display: 'flex', borderBottom: '1px solid rgba(255,255,255,0.06)', gap: '24px' }}>
+        <button
+          onClick={() => setActiveTab('community')}
+          style={{
+            background: 'none',
+            border: 'none',
+            borderBottom: activeTab === 'community' ? '3px solid var(--primary)' : '3px solid transparent',
+            color: activeTab === 'community' ? '#fff' : 'var(--text-muted)',
+            padding: '12px 6px',
+            fontSize: '15px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+        >
+          Signalements Communautaires ({communityReports.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('auto_detect')}
+          style={{
+            background: 'none',
+            border: 'none',
+            borderBottom: activeTab === 'auto_detect' ? '3px solid #ef4444' : '3px solid transparent',
+            color: activeTab === 'auto_detect' ? '#fff' : 'var(--text-muted)',
+            padding: '12px 6px',
+            fontSize: '15px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          Auto-Détection & Détresse ({autoDetectReports.length})
+          {autoDetectReports.length > 0 && (
+            <span style={{ background: '#ef4444', color: '#fff', fontSize: '10px', padding: '2px 6px', borderRadius: '10px', fontWeight: 'bold' }}>
+              CRISE
+            </span>
+          )}
+        </button>
+      </div>
+
+      {/* Reports Queue */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {displayReports.length === 0 ? (
+          <div className="admin-card" style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ margin: '0 auto 16px', opacity: 0.3 }}>
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+              <polyline points="22 4 12 14.01 9 11.01" />
+            </svg>
+            <h3 style={{ color: '#fff', fontSize: '16px', fontWeight: '700', marginBottom: '4px' }}>File de modération vide</h3>
+            <p style={{ fontSize: '13.5px' }}>Aucun signalement en attente dans cet onglet.</p>
+          </div>
+        ) : (
+          displayReports.map(report => {
+            const isPost = !!report.post_id;
+            
+            return (
+              <div
+                key={report.id}
+                className="admin-card animate-fade-in"
                 style={{
-                  padding: '10px 12px',
-                  fontSize: '12px',
+                  borderLeft: report.isSensitive ? '4px solid #ef4444' : '4px solid rgba(255,255,255,0.1)',
+                  background: report.isSensitive ? 'linear-gradient(90deg, rgba(239, 68, 68, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%)' : 'rgba(255, 255, 255, 0.02)',
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  background: 'rgba(255,255,255,0.01)',
-                  opacity: 0.6
+                  flexDirection: 'column',
+                  gap: '16px'
                 }}
               >
-                <div>
-                  <strong style={{ color: report.status === 'resolved' ? '#ef4444' : 'var(--sos-primary)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                    {report.status === 'resolved' ? (
-                      <>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="12" cy="12" r="10"></circle>
-                          <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
-                        </svg>
-                        <span>Bloqué</span>
-                      </>
-                    ) : (
-                      <>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        <span>Classé sans suite</span>
-                      </>
+                
+                {/* Badge alert headers */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{
+                      background: isPost ? 'rgba(249, 115, 22, 0.15)' : 'rgba(96, 165, 250, 0.15)',
+                      color: isPost ? '#f97316' : '#60a5fa',
+                      fontSize: '10px',
+                      fontWeight: '800',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                      textTransform: 'uppercase'
+                    }}>
+                      {isPost ? 'Publication' : 'Commentaire'}
+                    </span>
+                    {report.isSensitive && (
+                      <span style={{
+                        background: 'rgba(239, 68, 68, 0.15)',
+                        color: '#ef4444',
+                        fontSize: '10px',
+                        fontWeight: '900',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
+                      }}>
+                        🚨 Prioritaire : Mots-clés de Détresse
+                      </span>
                     )}
-                  </strong>
-                  <span style={{ color: 'var(--text-muted)', marginLeft: '10px' }}>
-                    Auteur : {report.author_username || 'Anonyme'}
+                  </div>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    Signalé le {new Date(report.created_at).toLocaleString('fr-FR')}
                   </span>
                 </div>
-                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                  ID : {report.id.substring(0, 8)}...
-                </span>
+
+                {/* Content grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: '30px', flexWrap: 'wrap' }}>
+                  
+                  {/* Left Column: Content detail */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    <div style={{ background: 'rgba(0,0,0,0.2)', padding: '16px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                      <p style={{ fontSize: '14.5px', lineHeight: '1.6', color: '#fff', fontStyle: 'italic' }}>
+                        "{report.content}"
+                      </p>
+                    </div>
+
+                    <div style={{ fontSize: '13px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ color: 'var(--text-muted)' }}>
+                        Auteur : <strong style={{ color: '#fff' }}>@{report.author_username}</strong>
+                      </span>
+                      <span style={{ color: 'var(--text-muted)' }}>
+                        Motif : <strong style={{ color: '#fff' }}>{report.reason}</strong>
+                      </span>
+                      {report.reporter_username !== 'Système' && (
+                        <span style={{ color: 'var(--text-muted)' }}>
+                          Signalé par : <strong style={{ color: '#fff' }}>@{report.reporter_username}</strong>
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Resources Dispatched alert box (for auto detect) */}
+                    {report.isSensitive && (
+                      <div style={{
+                        background: 'rgba(16, 185, 129, 0.06)',
+                        border: '1px solid rgba(16, 185, 129, 0.15)',
+                        padding: '12px 16px',
+                        borderRadius: '12px',
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '10px'
+                      }}>
+                        <span style={{ fontSize: '16px' }}>🛡️</span>
+                        <div>
+                          <strong style={{ fontSize: '12.5px', color: '#34d399', display: 'block' }}>Ressources d'aide transmises automatiquement</strong>
+                          <span style={{ fontSize: '11.5px', color: 'rgba(255,255,255,0.6)', lineHeight: '1.4', display: 'block', marginTop: '2px' }}>
+                            SMS de détresse envoyé contenant les urgences médicales (1515) et la gendarmerie (17). Suivi humain de modération requis.
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Right Column: Author metrics & Mod actions */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: 'rgba(255,255,255,0.01)', padding: '16px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.03)' }}>
+                    
+                    {/* User History */}
+                    <div>
+                      <h4 style={{ fontSize: '12px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '8px' }}>
+                        Historique de l'auteur
+                      </h4>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
+                        <span>Signalements antérieurs résolus :</span>
+                        <strong style={{
+                          color: report.author_previous_reports_count > 0 ? '#ef4444' : '#10b981',
+                          background: report.author_previous_reports_count > 0 ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                          padding: '2px 8px',
+                          borderRadius: '6px'
+                        }}>
+                          {report.author_previous_reports_count}
+                        </strong>
+                      </div>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '14px' }}>
+                      <h4 style={{ fontSize: '11px', fontWeight: '800', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+                        Actions Administratives
+                      </h4>
+                      
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        <button
+                          onClick={() => handleResolve(report.id, 'dismiss')}
+                          disabled={isPending}
+                          style={{
+                            background: 'rgba(255,255,255,0.03)',
+                            border: '1px solid rgba(255,255,255,0.08)',
+                            borderRadius: '10px',
+                            color: '#f3f4f6',
+                            padding: '8px',
+                            fontSize: '12.5px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          Ignorer
+                        </button>
+                        <button
+                          onClick={() => handleResolve(report.id, 'block')}
+                          disabled={isPending}
+                          style={{
+                            background: 'rgba(239, 68, 68, 0.1)',
+                            border: '1px solid rgba(239, 68, 68, 0.2)',
+                            borderRadius: '10px',
+                            color: '#f87171',
+                            padding: '8px',
+                            fontSize: '12.5px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() => handleResolve(report.id, 'warn')}
+                        disabled={isPending}
+                        style={{
+                          background: 'rgba(251, 146, 60, 0.1)',
+                          border: '1px solid rgba(251, 146, 60, 0.2)',
+                          borderRadius: '10px',
+                          color: '#fb923c',
+                          padding: '10px',
+                          fontSize: '12.5px',
+                          fontWeight: '700',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        ⚠️ Supprimer & Avertir l'auteur
+                      </button>
+
+                      {/* Expandable Suspension picker */}
+                      {selectedReportId === report.id ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '10px' }}>
+                          <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Durée de suspension :</span>
+                          <select
+                            value={suspensionDays}
+                            onChange={(e) => setSuspensionDays(parseInt(e.target.value))}
+                            style={{ background: '#0f0d1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', padding: '6px', color: '#fff', fontSize: '12px' }}
+                          >
+                            <option value={1}>1 Jour</option>
+                            <option value={3}>3 Jours</option>
+                            <option value={7}>7 Jours</option>
+                            <option value={30}>30 Jours</option>
+                          </select>
+                          <div style={{ display: 'flex', gap: '6px', marginTop: '4px' }}>
+                            <button
+                              onClick={() => handleResolve(report.id, 'suspend', suspensionDays)}
+                              style={{ flex: 1, background: '#fb923c', color: '#fff', border: 'none', borderRadius: '6px', padding: '6px', fontSize: '11.5px', fontWeight: 'bold', cursor: 'pointer' }}
+                            >
+                              Confirmer
+                            </button>
+                            <button
+                              onClick={() => setSelectedReportId(null)}
+                              style={{ background: 'rgba(255,255,255,0.05)', color: '#fff', border: 'none', borderRadius: '6px', padding: '6px 10px', fontSize: '11.5px', cursor: 'pointer' }}
+                            >
+                              Annuler
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => {
+                            setSelectedReportId(report.id);
+                            setSuspensionDays(7);
+                          }}
+                          disabled={isPending}
+                          style={{
+                            background: 'rgba(251, 146, 60, 0.15)',
+                            border: '1px solid rgba(251, 146, 60, 0.25)',
+                            borderRadius: '10px',
+                            color: '#fb923c',
+                            padding: '10px',
+                            fontSize: '12.5px',
+                            fontWeight: '700',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s'
+                          }}
+                        >
+                          ⏳ Supprimer & Suspendre
+                        </button>
+                      )}
+
+                      <button
+                        onClick={() => handleResolve(report.id, 'ban')}
+                        disabled={isPending}
+                        style={{
+                          background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)',
+                          border: 'none',
+                          borderRadius: '10px',
+                          color: '#fff',
+                          padding: '10px',
+                          fontSize: '12.5px',
+                          fontWeight: '700',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)'
+                        }}
+                      >
+                        ⛔ Supprimer & Bannir définitivement
+                      </button>
+
+                    </div>
+                  </div>
+
+                </div>
+
               </div>
-            ))
-          )}
-        </div>
+            );
+          })
+        )}
       </div>
 
     </div>

@@ -6,6 +6,7 @@ import { User } from '@/lib/auth';
 
 interface ProClientProps {
   user: User;
+  initialContents?: any[];
 }
 
 // Icônes SVG modernes
@@ -84,7 +85,7 @@ const SparklesIcon = () => (
   </svg>
 );
 
-export default function ProClient({ user }: ProClientProps) {
+export default function ProClient({ user, initialContents }: ProClientProps) {
   const [method, setMethod] = useState<'wave' | 'om'>('wave');
   const [phone, setPhone] = useState(user.identifier || '');
   const [isPending, startTransition] = useTransition();
@@ -251,21 +252,94 @@ export default function ProClient({ user }: ProClientProps) {
 
         {isPro ? (
           /* Écran Pro Actif */
-          <div className="card animate-fade-in" style={{ 
-            border: '1px solid rgba(251, 191, 36, 0.3)', 
-            background: 'radial-gradient(circle at top right, rgba(251,191,36,0.06) 0%, rgba(255,255,255,0.01) 100%)', 
-            textAlign: 'center', 
-            padding: '36px 20px',
-            borderRadius: '24px',
-            boxShadow: '0 15px 40px rgba(0,0,0,0.5)'
-          }}>
-            <SparklesIcon />
-            <strong style={{ fontSize: '20px', color: '#fbbf24', display: 'block', marginBottom: '10px', fontFamily: 'var(--font-title)' }}>
-              Accès Pro Activé !
-            </strong>
-            <p style={{ fontSize: '14px', color: 'var(--text-muted)', lineHeight: '1.6', maxWidth: '340px', margin: '0 auto' }}>
-              Tu es désormais un membre pilier de la communauté Goumin. Profite de tous tes avantages illimités et merci pour ta générosité. 💛
-            </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div className="card animate-fade-in" style={{ 
+              border: '1px solid rgba(251, 191, 36, 0.3)', 
+              background: 'radial-gradient(circle at top right, rgba(251,191,36,0.06) 0%, rgba(255,255,255,0.01) 100%)', 
+              textAlign: 'center', 
+              padding: '24px 20px',
+              borderRadius: '24px',
+              boxShadow: '0 15px 40px rgba(0,0,0,0.5)'
+            }}>
+              <SparklesIcon />
+              <strong style={{ fontSize: '20px', color: '#fbbf24', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-title)' }}>
+                Accès Pro Activé !
+              </strong>
+              <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: '1.5', maxWidth: '340px', margin: '0 auto' }}>
+                Tu es désormais un membre pilier de la communauté Goumin. Merci pour ta générosité. 💛 Découvre tes contenus exclusifs ci-dessous.
+              </p>
+            </div>
+
+            {/* Liste des contenus exclusifs Pro */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: '800', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '8px', color: '#fff' }}>
+                📚 Espace Culturel Exclusif
+              </h3>
+
+              {(!initialContents || initialContents.length === 0) ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '13px' }}>
+                  Aucun contenu publié pour le moment. L'équipe éditoriale prépare de nouvelles chroniques très bientôt !
+                </div>
+              ) : (
+                initialContents.map((content) => (
+                  <div 
+                    key={content.id}
+                    className="animate-fade-in card"
+                    style={{
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(255,255,255,0.05)',
+                      borderRadius: '16px',
+                      padding: '20px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{
+                        background: content.type === 'citation' ? 'rgba(251, 191, 36, 0.15)' : content.type === 'audio' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(96, 165, 250, 0.15)',
+                        color: content.type === 'citation' ? '#fbbf24' : content.type === 'audio' ? '#10b981' : '#60a5fa',
+                        fontSize: '9px',
+                        fontWeight: '800',
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        textTransform: 'uppercase'
+                      }}>
+                        {content.type === 'citation' ? 'citation' : content.type === 'audio' ? 'chronique audio' : 'lecture inspirante'}
+                      </span>
+                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        {new Date(content.publish_at).toLocaleDateString('fr-FR')}
+                      </span>
+                    </div>
+
+                    <h4 style={{ fontSize: '16px', fontWeight: '800', color: '#fff' }}>{content.title}</h4>
+                    
+                    {content.content && (
+                      <p style={{ 
+                        fontSize: '13.5px', 
+                        lineHeight: '1.6', 
+                        color: 'var(--text-main)',
+                        fontStyle: content.type === 'citation' ? 'italic' : 'normal',
+                        borderLeft: content.type === 'citation' ? '2px solid #fbbf24' : 'none',
+                        paddingLeft: content.type === 'citation' ? '12px' : '0'
+                      }}>
+                        {content.content}
+                      </p>
+                    )}
+
+                    {content.type === 'audio' && content.audio_url && (
+                      <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <audio 
+                          controls 
+                          src={content.audio_url} 
+                          style={{ width: '100%', borderRadius: '10px', height: '40px' }} 
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         ) : (
           /* Liste des Fonctionnalités & Formulaire d'abonnement */

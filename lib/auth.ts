@@ -13,6 +13,9 @@ export interface User {
   subscription_tier: 'simple' | 'pro';
   trust_contact: string | null;
   current_step: string;
+  status: string;
+  suspended_until: Date | null;
+  warning_count: number;
   created_at: Date;
 }
 
@@ -93,6 +96,15 @@ export async function getCurrentUser(): Promise<User | null> {
     const actualTier = await checkAndUpdateSubscription(user.id, user.subscription_tier);
     user.subscription_tier = actualTier;
     
+    // Gérer l'expiration de la suspension
+    let currentStatus = user.status || 'active';
+    let suspendedUntil = user.suspended_until ? new Date(user.suspended_until) : null;
+    if (currentStatus === 'suspended' && suspendedUntil && suspendedUntil < new Date()) {
+      await db.query("UPDATE users SET status = 'active', suspended_until = NULL WHERE id = $1", [user.id]);
+      currentStatus = 'active';
+      suspendedUntil = null;
+    }
+
     return {
       id: user.id,
       username: user.username,
@@ -100,6 +112,9 @@ export async function getCurrentUser(): Promise<User | null> {
       subscription_tier: user.subscription_tier as 'simple' | 'pro',
       trust_contact: user.trust_contact,
       current_step: user.current_step,
+      status: currentStatus,
+      suspended_until: suspendedUntil,
+      warning_count: parseInt(user.warning_count || '0'),
       created_at: new Date(user.created_at)
     };
   } catch (error) {
@@ -111,4 +126,45 @@ export async function getCurrentUser(): Promise<User | null> {
 export async function logout() {
   const cookieStore = cookies();
   cookieStore.set(COOKIE_NAME, '', { maxAge: 0, path: '/' });
+}
+
+// ================= Admin Auth Helper functions =================
+
+export interface Admin {
+  id: string;
+  username: string;
+}
+
+export async function createAdminSession(adminId: string) {
+  const token = jwt.sign({ adminId }, JWT_SECRET, { expiresIn: '7d' });
+  const cookieStore = cookies();
+  cookieStore.set('goumin_admin_session', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7, // 7 jours
+    path: '/'
+  });
+}
+
+export async function getCurrentAdmin(): Promise<Admin | null> {
+  const cookieStore = cookies();
+  const token = cookieStore.get('goumin_admin_session')?.value;
+  if (!token) return null;
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { adminId: string };
+    const result = await db.query('SELECT id, username FROM admins WHERE id = $1', [decoded.adminId]);
+    if (result.rows.length === 0) return null;
+    return {
+      id: result.rows[0].id,
+      username: result.rows[0].username
+    };
+  } catch {
+    return null;
+  }
+}
+
+export async function adminLogout() {
+  const cookieStore = cookies();
+  cookieStore.set('goumin_admin_session', '', { maxAge: 0, path: '/' });
 }

@@ -58,6 +58,44 @@ export default function AppWrapper({ children, user }: AppWrapperProps) {
   const pathname = usePathname();
   const router = useRouter();
 
+  const isAdminPage = pathname.startsWith('/admin');
+
+  // Si l'utilisateur est banni ou suspendu, bloquer l'accès à l'app publique
+  if (user && !isAdminPage) {
+    if (user.status === 'banned') {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#07060f', color: '#ef4444', padding: '30px', textAlign: 'center', width: '100%' }}>
+          <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '28px', fontWeight: '800', marginBottom: '16px' }}>Compte Banni</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '15px', maxWidth: '360px', lineHeight: '1.6' }}>
+            Ton compte Goumin a été définitivement banni par l'équipe de modération pour non-respect des règles communautaires.
+          </p>
+        </div>
+      );
+    }
+    if (user.status === 'suspended') {
+      const remainingTime = user.suspended_until ? new Date(user.suspended_until).toLocaleString() : 'une durée indéterminée';
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#07060f', color: '#fb923c', padding: '30px', textAlign: 'center', width: '100%' }}>
+          <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '28px', fontWeight: '800', marginBottom: '16px' }}>Compte Suspendu</h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '15px', maxWidth: '360px', lineHeight: '1.6', marginBottom: '20px' }}>
+            Ton compte Goumin est temporairement suspendu par l'équipe de modération.
+          </p>
+          <div style={{ background: 'rgba(251,146,60,0.1)', border: '1px solid rgba(251,146,60,0.2)', padding: '12px 20px', borderRadius: '14px', fontSize: '13px' }}>
+            Suspension active jusqu'au : <strong style={{ color: '#fff' }}>{remainingTime}</strong>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  if (isAdminPage) {
+    return (
+      <div style={{ minHeight: '100vh', background: '#0b0a11', color: '#f3f4f6', width: '100vw', display: 'flex', flexDirection: 'column' }}>
+        {children}
+      </div>
+    );
+  }
+
   // Déterminer si on est sur l'écran SOS pour appliquer le thème vert calme
   const isSosPage = pathname === '/sos';
 

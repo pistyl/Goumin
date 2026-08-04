@@ -24,6 +24,7 @@ interface Circle {
   id: string;
   name: string;
   description: string;
+  emoji?: string;
 }
 
 interface HomeClientProps {
@@ -289,7 +290,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
               onChange={(e) => setTargetCircle(e.target.value)}
             >
               {circles.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
+                <option key={c.id} value={c.id}>{c.emoji || '💬'} {c.name}</option>
               ))}
             </select>
           </div>
@@ -400,7 +401,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                 cursor: 'pointer'
               }}
             >
-              {c.name}
+              {c.emoji || '💬'} {c.name}
             </button>
           ))}
         </div>
@@ -422,7 +423,17 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
             const circle = circles.find(c => c.id === post.circle_id);
 
             return (
-              <div key={post.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div 
+                key={post.id} 
+                className="card" 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '12px',
+                  border: (post as any).is_pinned ? '1px solid rgba(251, 191, 36, 0.35)' : '1px solid var(--border-color)',
+                  background: (post as any).is_pinned ? 'radial-gradient(circle at top right, rgba(251,191,36,0.04) 0%, rgba(255,255,255,0.01) 100%)' : 'rgba(255,255,255,0.03)'
+                }}
+              >
                 
                 {/* Header du post */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -438,6 +449,11 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                       <span style={{ fontSize: '10px', background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', color: '#000', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>PRO</span>
                     )}
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>• {formatTimeAgo(post.created_at)}</span>
+                    {(post as any).is_pinned && (
+                      <span style={{ fontSize: '9px', background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', color: '#000', padding: '1px 5px', borderRadius: '4px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        📌 Épinglé
+                      </span>
+                    )}
                   </div>
 
                   {circle && (
@@ -449,7 +465,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                       borderRadius: '10px',
                       border: '1px solid rgba(129, 140, 248, 0.1)'
                     }}>
-                      {circle.name}
+                      {circle.emoji || '💬'} {circle.name}
                     </span>
                   )}
                 </div>

@@ -10,7 +10,7 @@ export default async function Page() {
   // Récupérer les cercles de base pour l'inscription (au moins les 4 imposés)
   let circlesResult;
   try {
-    circlesResult = await db.query('SELECT * FROM circles ORDER BY created_at ASC');
+    circlesResult = await db.query('SELECT * FROM circles WHERE is_archived = FALSE ORDER BY display_order ASC, created_at ASC');
   } catch (err) {
     console.error('Error fetching circles:', err);
     circlesResult = { rows: [] };
@@ -19,7 +19,8 @@ export default async function Page() {
   const circles = circlesResult.rows.map(row => ({
     id: row.id,
     name: row.name,
-    description: row.description
+    description: row.description,
+    emoji: row.emoji || '💬'
   }));
 
   if (!user) {
@@ -41,7 +42,7 @@ export default async function Page() {
        FROM posts 
        LEFT JOIN users ON posts.user_id = users.id 
        WHERE posts.status = 'approved' 
-       ORDER BY posts.created_at DESC`,
+       ORDER BY posts.is_pinned DESC, posts.created_at DESC`,
       [user.id]
     );
   } catch (err) {
@@ -55,6 +56,7 @@ export default async function Page() {
     user_id: row.user_id,
     content: row.content,
     is_anonym: row.is_anonym,
+    is_pinned: row.is_pinned,
     status: row.status,
     created_at: row.created_at.toISOString(),
     username: row.username,
