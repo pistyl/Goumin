@@ -271,7 +271,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
       {/* Formulaire de publication */}
       <form onSubmit={handleCreatePost} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <textarea 
-          placeholder="Dépose ton goumin ici... Parle avec ton cœur (ex. en nouchi ou en français)..."
+          placeholder="Dépose ton goumin ici... Parle avec ton cœur..."
           className="input-field"
           style={{ minHeight: '90px', resize: 'none' }}
           value={postContent}
