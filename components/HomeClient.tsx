@@ -248,7 +248,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
         padding: '16px'
       }}>
         <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: '700', marginBottom: '4px', display: 'flex', alignItems: 'center' }}>
-          Y a quoi dans ton cœur aujourd'hui ? 
+          Y a quoi dans ton cœur <span style={{ whiteSpace: 'nowrap' }}>aujourd'hui ?</span>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ display: 'inline-block', marginLeft: '6px', color: '#f43f5e' }}>
             <path d="M12 5c-1.7-2.7-5.5-2.7-7.3 0C3 7.7 3 12 7.5 16.5L12 21l4.5-4.5C21 12 21 7.7 19.3 5c-1.8-2.7-5.6-2.7-7.3 0z" />
             <path d="M12 5l-1 4 2 3-2 3 1 3" />

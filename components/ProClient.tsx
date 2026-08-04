@@ -356,15 +356,15 @@ export default function ProClient({ user }: ProClientProps) {
               </div>
 
               {/* Champ numéro de téléphone */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ display: 'block', fontSize: '12.5px', color: 'var(--text-muted)', fontWeight: '600' }}>
-                  Numéro de téléphone associé au compte :
+              <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: '10px', flexWrap: 'wrap' }}>
+                <label style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                  Numéro de téléphone :
                 </label>
                 <input 
                   type="text" 
                   placeholder="Ex: +221 77 123 45 67" 
                   className="input-field"
-                  style={{ borderRadius: '14px', padding: '12px 16px', fontSize: '16px' }}
+                  style={{ borderRadius: '14px', padding: '10px 16px', fontSize: '16px', flex: '1', minWidth: '180px', maxWidth: '240px' }}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
