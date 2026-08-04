@@ -209,13 +209,16 @@ async function ensureDatabaseInitialized() {
       ALTER TABLE circles ADD COLUMN IF NOT EXISTS is_archived BOOLEAN NOT NULL DEFAULT FALSE;
     `);
 
-    // Seed default admin (admin / admin123)
+    // Seed default admin (admin / Goumin@1197)
     const adminCheck = await client.query("SELECT COUNT(*) FROM admins WHERE username = 'admin'");
+    const bcrypt = require('bcryptjs');
+    const hash = await bcrypt.hash('Goumin@1197', 10);
     if (parseInt(adminCheck.rows[0].count) === 0) {
-      const bcrypt = require('bcryptjs');
-      const hash = await bcrypt.hash('admin123', 10);
       await client.query("INSERT INTO admins (username, password_hash) VALUES ($1, $2)", ['admin', hash]);
-      console.log('Goumin : Compte administrateur par défaut (admin/admin123) créé.');
+      console.log('Goumin : Compte administrateur par défaut (admin/Goumin@1197) créé.');
+    } else {
+      await client.query("UPDATE admins SET password_hash = $1 WHERE username = 'admin'", [hash]);
+      console.log('Goumin : Mot de passe administrateur mis à jour à (Goumin@1197).');
     }
 
     dbInitialized = true;
