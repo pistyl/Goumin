@@ -247,12 +247,14 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
         border: '1px solid var(--border-color)',
         padding: '16px'
       }}>
-        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: '700', marginBottom: '4px', display: 'flex', alignItems: 'center' }}>
-          Y a quoi dans ton cœur <span style={{ whiteSpace: 'nowrap' }}>aujourd'hui ?</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ display: 'inline-block', marginLeft: '6px', color: '#f43f5e' }}>
-            <path d="M12 5c-1.7-2.7-5.5-2.7-7.3 0C3 7.7 3 12 7.5 16.5L12 21l4.5-4.5C21 12 21 7.7 19.3 5c-1.8-2.7-5.6-2.7-7.3 0z" />
-            <path d="M12 5l-1 4 2 3-2 3 1 3" />
-          </svg>
+        <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: '700', marginBottom: '4px', lineHeight: '1.3' }}>
+          Y a quoi dans ton cœur <span style={{ whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', verticalAlign: 'middle' }}>
+            aujourd'hui ?
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginLeft: '6px', color: '#f43f5e', flexShrink: 0 }}>
+              <path d="M12 5c-1.7-2.7-5.5-2.7-7.3 0C3 7.7 3 12 7.5 16.5L12 21l4.5-4.5C21 12 21 7.7 19.3 5c-1.8-2.7-5.6-2.7-7.3 0z" />
+              <path d="M12 5l-1 4 2 3-2 3 1 3" />
+            </svg>
+          </span>
         </h3>
         <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.4' }}>
           Ici c'est la famille, on parle de notre goumin sans honte. Dis-nous comment tu te sens ou réagis aux publications pour dire aux autres : « Je suis passé·e par là ».
