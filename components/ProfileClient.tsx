@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { updateStepAction, updateSettingsAction, logoutAction } from '@/app/actions';
 import { User } from '@/lib/auth';
 import { getMoonIcon } from './AppWrapper';
+import PhoneInputWithCountry from './PhoneInputWithCountry';
 
 interface ProfileClientProps {
   user: User;
@@ -302,16 +303,12 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
 
         <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div>
-            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '4px' }}>
+            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>
               Numéro du Contact de Confiance (pour le mode SOS)
             </label>
-            <input 
-              type="text" 
-              placeholder="Ex: +221771234567" 
-              className="input-field"
-              style={{ padding: '10px 12px', fontSize: '16px' }}
+            <PhoneInputWithCountry 
               value={trustContact}
-              onChange={(e) => setTrustContact(e.target.value)}
+              onChange={setTrustContact}
             />
           </div>
 

@@ -3,6 +3,7 @@
 import React, { useState, useTransition } from 'react';
 import { signUpAction, loginAction } from '@/app/actions';
 import { WEST_AFRICAN_AND_GLOBAL_COUNTRIES, CountryCode } from '@/lib/countries';
+import PhoneInputWithCountry from './PhoneInputWithCountry';
 
 interface AuthContainerProps {
   circles: { id: string; name: string; description: string }[];
@@ -339,7 +340,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
               />
             </div>
 
-            {/* SÉLECTEUR DE TYPE ET CHAMP DE TÉLÉPHONE AVEC INDICATIF NATIONALE */}
+            {/* SÉLECTEUR DE TYPE ET CHAMP DE TÉLÉPHONE AVEC PILULE DE DRAPEAU ET INDICATIF */}
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
                 <label style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
@@ -355,39 +356,19 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
               </div>
 
               {identifierMode === 'phone' ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <div className="phone-input-group">
-                    {/* Bibliothèque d'indicatifs téléphoniques */}
-                    <select 
-                      className="country-code-select"
-                      value={selectedCountryCode}
-                      onChange={(e) => setSelectedCountryCode(e.target.value)}
-                      title="Choisir le pays d'origine"
-                    >
-                      {WEST_AFRICAN_AND_GLOBAL_COUNTRIES.map(c => (
-                        <option key={c.code} value={c.code}>
-                          {c.flag} {c.code} ({c.name})
-                        </option>
-                      ))}
-                    </select>
-
-                    <input 
-                      type="tel"
-                      placeholder={`Ex: ${currentCountry.example}`}
-                      className="input-field"
-                      style={{ flex: 1 }}
-                      value={phoneLocal}
-                      onChange={(e) => setPhoneLocal(e.target.value)}
-                      required={screen === 'signup' && identifierMode === 'phone'}
-                    />
-                  </div>
-
-                  {finalIdentifier && (
-                    <span style={{ fontSize: '11px', color: '#34d399', fontWeight: '500', display: 'block', paddingLeft: '2px' }}>
-                      ✓ Format valide : <strong>{finalIdentifier}</strong>
-                    </span>
-                  )}
-                </div>
+                <PhoneInputWithCountry 
+                  value={phoneLocal ? `${selectedCountryCode}${phoneLocal.replace(/\D/g, '')}` : ''}
+                  onChange={(fullVal) => {
+                    const matched = WEST_AFRICAN_AND_GLOBAL_COUNTRIES.find(c => fullVal.startsWith(c.code));
+                    if (matched) {
+                      setSelectedCountryCode(matched.code);
+                      setPhoneLocal(fullVal.slice(matched.code.length));
+                    } else {
+                      setPhoneLocal(fullVal);
+                    }
+                  }}
+                  required={screen === 'signup' && identifierMode === 'phone'}
+                />
               ) : (
                 <input 
                   type="email" 

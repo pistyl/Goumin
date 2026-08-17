@@ -3,6 +3,7 @@
 import React, { useState, useTransition } from 'react';
 import { subscribeProAction } from '@/app/actions';
 import { User } from '@/lib/auth';
+import PhoneInputWithCountry from './PhoneInputWithCountry';
 
 interface ProClientProps {
   user: User;
@@ -429,20 +430,15 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
                 </div>
               </div>
 
-              {/* Champ numéro de téléphone */}
+              {/* Champ numéro de téléphone avec pilule de drapeau et indicatif */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', whiteSpace: 'nowrap' }}>
                   Numéro de téléphone associé au compte :
                 </label>
-                <input 
-                  type="text" 
-                  placeholder="Ex: +221 77 123 45 67" 
-                  className="input-field"
-                  style={{ borderRadius: '14px', padding: '12px 16px', fontSize: '16px' }}
+                <PhoneInputWithCountry 
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  onChange={setPhone}
                   required
-                  disabled={isPending}
                 />
               </div>
 
