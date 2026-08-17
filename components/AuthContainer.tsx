@@ -2,6 +2,7 @@
 
 import React, { useState, useTransition } from 'react';
 import { signUpAction, loginAction } from '@/app/actions';
+import { WEST_AFRICAN_AND_GLOBAL_COUNTRIES, CountryCode } from '@/lib/countries';
 
 interface AuthContainerProps {
   circles: { id: string; name: string; description: string }[];
@@ -12,11 +13,28 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
   
   // États de saisie locale pour l'inscription (Étape 1)
   const [username, setUsername] = useState('');
-  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+
+  // Gestion du champ Identifiant (Téléphone avec Indicatif vs Email)
+  const [identifierMode, setIdentifierMode] = useState<'phone' | 'email'>('phone');
+  const [selectedCountryCode, setSelectedCountryCode] = useState<string>('+221');
+  const [phoneLocal, setPhoneLocal] = useState<string>('');
+  const [emailIdentifier, setEmailIdentifier] = useState<string>('');
 
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  // Calcul dynamique de l'identifiant final (ex: +221771234567 ou email@mail.com)
+  const computeFinalIdentifier = () => {
+    if (identifierMode === 'phone') {
+      const cleanDigits = phoneLocal.replace(/\D/g, '');
+      return cleanDigits ? `${selectedCountryCode}${cleanDigits}` : '';
+    }
+    return emailIdentifier.trim();
+  };
+
+  const finalIdentifier = computeFinalIdentifier();
+  const currentCountry = WEST_AFRICAN_AND_GLOBAL_COUNTRIES.find(c => c.code === selectedCountryCode) || WEST_AFRICAN_AND_GLOBAL_COUNTRIES[0];
 
   const handleGoToSignUp = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -40,13 +58,18 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
     e.preventDefault();
     setError(null);
     
-    if (!username.trim() || !identifier.trim() || !password.trim()) {
+    if (!username.trim() || !finalIdentifier || !password.trim()) {
       setError('Remplis toutes les cases pour créer ton profil, s\'il te plaît.');
       return;
     }
     
     if (password.length < 4) {
       setError('Le mot de passe doit faire au moins 4 caractères.');
+      return;
+    }
+
+    if (identifierMode === 'phone' && phoneLocal.replace(/\D/g, '').length < 6) {
+      setError('Saisis un numéro de téléphone valide.');
       return;
     }
     
@@ -63,15 +86,14 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
+    formData.set('identifier', finalIdentifier);
 
     startTransition(async () => {
       const res = await signUpAction(null, formData);
       if (res?.error) {
         setError(res.error);
-        setScreen('signup'); // ramener à l'étape 1 en cas d'erreur
+        setScreen('signup');
       }
-      // Note : Si succès, redirect('/') est déclenché côté serveur dans signUpAction, 
-      // ce qui recharge et redirige l'application de façon fluide.
     });
   };
 
@@ -87,14 +109,13 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
       if (res?.error) {
         setError(res.error);
       }
-      // Note : Si succès, redirect('/') est déclenché côté serveur dans loginAction.
     });
   };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '80vh', justifyContent: 'center', padding: '10px 0' }}>
       
-      {/* 1. ÉCRAN SPLASH / INTRO (Gauche dans la maquette) */}
+      {/* 1. ÉCRAN SPLASH / INTRO */}
       {screen === 'splash' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '30px', margin: '40px 0' }}>
           
@@ -157,7 +178,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
         </div>
       )}
 
-      {/* 2. FORMULAIRE DE CONNEXION INDÉPENDANT (Milieu dans la maquette) */}
+      {/* 2. FORMULAIRE DE CONNEXION INDÉPENDANT */}
       {screen === 'login' && (
         <form onSubmit={handleLoginSubmit} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
@@ -168,6 +189,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
               </strong>
             </div>
             <button 
+              type="button"
               onClick={handleGoToSplash}
               style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '13px', cursor: 'pointer', fontWeight: '500' }}
             >
@@ -184,12 +206,12 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                Pseudo, Email ou Téléphone
+                Pseudo, Email ou Numéro de Téléphone
               </label>
               <input 
                 name="identifier" 
                 type="text" 
-                placeholder="Entre ton identifiant..." 
+                placeholder="Ex: Dakar_Boy, email@mail.com ou +22177..." 
                 className="input-field"
                 required
               />
@@ -275,7 +297,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
         </form>
       )}
 
-      {/* 3. FORMULAIRE D'INSCRIPTION INDÉPENDANT (Droite dans la maquette) */}
+      {/* 3. FORMULAIRE D'INSCRIPTION INDÉPENDANT AVEC SÉLECTEUR D'INDICATIF TÉLÉPHONIQUE */}
       {(screen === 'signup' || screen === 'signup_circles') && (
         <form onSubmit={handleSignUpSubmit} className="card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           
@@ -286,6 +308,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
               </strong>
             </div>
             <button 
+              type="button"
               onClick={handleGoToSplash}
               style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '13px', cursor: 'pointer', fontWeight: '500' }}
             >
@@ -316,19 +339,68 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
               />
             </div>
 
+            {/* SÉLECTEUR DE TYPE ET CHAMP DE TÉLÉPHONE AVEC INDICATIF NATIONALE */}
             <div>
-              <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                Email ou Numéro de Téléphone
-              </label>
-              <input 
-                name="identifier" 
-                type="text" 
-                placeholder="Ex: monadresse@mail.com ou +22177..." 
-                className="input-field"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
-                required={screen === 'signup'}
-              />
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                <label style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                  {identifierMode === 'phone' ? 'Numéro de téléphone avec indicatif' : 'Adresse Email'}
+                </label>
+                <button 
+                  type="button" 
+                  className="mode-toggle-btn"
+                  onClick={() => setIdentifierMode(identifierMode === 'phone' ? 'email' : 'phone')}
+                >
+                  {identifierMode === 'phone' ? 'Utiliser un email plutôt' : 'Utiliser un téléphone à la place'}
+                </button>
+              </div>
+
+              {identifierMode === 'phone' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <div className="phone-input-group">
+                    {/* Bibliothèque d'indicatifs téléphoniques */}
+                    <select 
+                      className="country-code-select"
+                      value={selectedCountryCode}
+                      onChange={(e) => setSelectedCountryCode(e.target.value)}
+                      title="Choisir le pays d'origine"
+                    >
+                      {WEST_AFRICAN_AND_GLOBAL_COUNTRIES.map(c => (
+                        <option key={c.code} value={c.code}>
+                          {c.flag} {c.code} ({c.name})
+                        </option>
+                      ))}
+                    </select>
+
+                    <input 
+                      type="tel"
+                      placeholder={`Ex: ${currentCountry.example}`}
+                      className="input-field"
+                      style={{ flex: 1 }}
+                      value={phoneLocal}
+                      onChange={(e) => setPhoneLocal(e.target.value)}
+                      required={screen === 'signup' && identifierMode === 'phone'}
+                    />
+                  </div>
+
+                  {finalIdentifier && (
+                    <span style={{ fontSize: '11px', color: '#34d399', fontWeight: '500', display: 'block', paddingLeft: '2px' }}>
+                      ✓ Format valide : <strong>{finalIdentifier}</strong>
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <input 
+                  type="email" 
+                  placeholder="Ex: monadresse@mail.com" 
+                  className="input-field"
+                  value={emailIdentifier}
+                  onChange={(e) => setEmailIdentifier(e.target.value)}
+                  required={screen === 'signup' && identifierMode === 'email'}
+                />
+              )}
+
+              {/* Input hidden pour l'envoi FormData standard */}
+              <input type="hidden" name="identifier" value={finalIdentifier} />
             </div>
 
             <div>
@@ -411,7 +483,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
 
             {/* Inputs cachés de l'étape 1 pour la transmission form standard */}
             <input type="hidden" name="username" value={username} />
-            <input type="hidden" name="identifier" value={identifier} />
+            <input type="hidden" name="identifier" value={finalIdentifier} />
             <input type="hidden" name="password" value={password} />
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
