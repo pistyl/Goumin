@@ -142,7 +142,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
               Goumin support
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', marginTop: '12px', padding: '0 20px' }}>
-              La plateforme communautaire mobile-first pour surmonter les chagrins d'amour entre pairs. Ici, pas de clinique, juste de l'entraide chaleureuse. 🧡
+              La plateforme communautaire pour surmonter les chagrins d'amour entre pairs. Ici, pas de clinique, juste de l'entraide chaleureuse. 🧡
             </p>
           </div>
 
@@ -163,7 +163,6 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '14px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '24px' }}>👤</span>
               <strong style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: 'bold' }}>
                 Se connecter
               </strong>
@@ -282,7 +281,6 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
           
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '14px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontSize: '24px' }}>✨</span>
               <strong style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: 'bold' }}>
                 Inscription
               </strong>
@@ -305,7 +303,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
           <div style={{ display: screen === 'signup' ? 'flex' : 'none', flexDirection: 'column', gap: '16px' }}>
             <div>
               <label style={{ display: 'block', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                Pseudo (Ton pseudo communautaire stable)
+                Pseudo
               </label>
               <input 
                 name="username" 

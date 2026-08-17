@@ -290,7 +290,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
               onChange={(e) => setTargetCircle(e.target.value)}
             >
               {circles.map(c => (
-                <option key={c.id} value={c.id}>{c.emoji || '💬'} {c.name}</option>
+                <option key={c.id} value={c.id}>{c.emoji && c.emoji !== '💬' ? c.emoji + ' ' : ''}{c.name}</option>
               ))}
             </select>
           </div>
@@ -401,7 +401,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                 cursor: 'pointer'
               }}
             >
-              {c.emoji || '💬'} {c.name}
+              {c.emoji && c.emoji !== '💬' ? c.emoji + ' ' : ''}{c.name}
             </button>
           ))}
         </div>
@@ -465,7 +465,7 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                       borderRadius: '10px',
                       border: '1px solid rgba(129, 140, 248, 0.1)'
                     }}>
-                      {circle.emoji || '💬'} {circle.name}
+                      {circle.emoji && circle.emoji !== '💬' ? circle.emoji + ' ' : ''}{circle.name}
                     </span>
                   )}
                 </div>

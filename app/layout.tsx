@@ -4,7 +4,7 @@ import AppWrapper from '@/components/AppWrapper';
 
 export const metadata = {
   title: 'Goumin - Entraide & soutien deuil amoureux',
-  description: 'Goumin est une plateforme d\'entraide communautaire mobile-first pour surmonter le deuil amoureux au Sénégal et en Afrique de l\'Ouest.',
+  description: 'Goumin est une plateforme d\'entraide communautaire pour surmonter le deuil amoureux au Sénégal et en Afrique de l\'Ouest.',
   manifest: '/manifest.json',
 };
 
