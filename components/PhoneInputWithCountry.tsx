@@ -80,7 +80,19 @@ export default function PhoneInputWithCountry({
           flexShrink: 0
         }}>
           <span style={{ fontSize: '20px', lineHeight: 1 }}>{selectedCountry.flag}</span>
-          <span style={{ fontSize: '10px', color: 'var(--text-muted)', marginLeft: '6px' }}>▾</span>
+          <svg 
+            width="12" 
+            height="12" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="var(--primary)" 
+            strokeWidth="3" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            style={{ marginLeft: '6px', flexShrink: 0 }}
+          >
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
 
           {/* Select natif transparent superposé pour le comportement tactile fluide */}
           <select
