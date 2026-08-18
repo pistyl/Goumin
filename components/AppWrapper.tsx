@@ -114,12 +114,25 @@ export default function AppWrapper({ children, user }: AppWrapperProps) {
         background: 'rgba(4, 16, 12, 0.8)',
         borderColor: 'rgba(16, 185, 129, 0.12)'
       } : {}}>
-        <div className="logo" style={isSosPage ? {
-          background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent'
-        } : {}}>
-          Goumin
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img 
+            src="/images/icon.png" 
+            alt="Goumin Logo" 
+            style={{ 
+              width: '30px', 
+              height: '30px', 
+              borderRadius: '8px', 
+              objectFit: 'cover',
+              boxShadow: isSosPage ? '0 0 10px rgba(16, 185, 129, 0.4)' : '0 0 12px rgba(236, 72, 153, 0.4)'
+            }} 
+          />
+          <div className="logo" style={isSosPage ? {
+            background: 'linear-gradient(135deg, #10b981 0%, #34d399 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          } : {}}>
+            Goumin
+          </div>
         </div>
 
         {user && (

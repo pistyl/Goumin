@@ -4,19 +4,21 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-title: 'Outfit', sans-serif;
 
-  /* Palette principale : Thème Nuit Sombre avec Auras Chaudes (Orange/Jaune) */
-  --bg-dark: #07060f;
+  /* Palette principale alignée sur le Logo Goumin (Cœur néon rose/magenta & mains protectrices violettes) */
+  --bg-dark: #070611;
   --bg-card: rgba(255, 255, 255, 0.03);
   --bg-card-hover: rgba(255, 255, 255, 0.06);
-  --border-color: rgba(255, 255, 255, 0.07);
+  --border-color: rgba(236, 72, 153, 0.14);
   
-  --primary: #f97316; /* Orange chaud */
-  --secondary: #eab308; /* Jaune d'or */
-  --primary-glow: rgba(249, 117, 22, 0.15);
+  --primary: #ec4899; /* Rose Magenta néon du cœur */
+  --secondary: #a855f7; /* Violet néon des mains protectrices */
+  --accent-rose: #f43f5e;
+  --primary-glow: rgba(236, 72, 153, 0.25);
+  --purple-glow: rgba(168, 85, 247, 0.25);
   
   --text-main: #f3f4f6;
-  --text-muted: #8e8d99;
-  --text-glow: #ffedd5;
+  --text-muted: #9a99a8;
+  --text-glow: #fce7f3;
   
   /* SOS Mode Color System: Vert émeraude réconfortant */
   --sos-bg: #04100c;
@@ -43,7 +45,7 @@ html, body {
 }
 
 body {
-  background-color: #030206;
+  background-color: #040309;
   color: var(--text-main);
   font-family: var(--font-sans);
   min-height: 100vh;
@@ -56,13 +58,13 @@ body {
   width: 100%;
   max-width: 480px;
   min-height: 100vh;
-  background: radial-gradient(circle at 80% 10%, rgba(234, 179, 8, 0.09) 0%, rgba(249, 115, 22, 0.04) 40%, var(--bg-dark) 100%);
+  background: radial-gradient(circle at 80% 10%, rgba(236, 72, 153, 0.12) 0%, rgba(168, 85, 247, 0.07) 45%, var(--bg-dark) 100%);
   border-left: 1px solid var(--border-color);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: 0 0 45px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
   padding-bottom: calc(84px + env(safe-area-inset-bottom)); /* Espace pour la barre du bas avec marge safe area */
   transition: background 0.3s ease;
 }
@@ -75,8 +77,8 @@ header {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
-  background: rgba(7, 6, 15, 0.8);
-  backdrop-filter: blur(12px);
+  background: rgba(7, 6, 17, 0.85);
+  backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -86,7 +88,7 @@ header {
   font-family: var(--font-title);
   font-size: 24px;
   font-weight: 800;
-  background: linear-gradient(135deg, #f97316 0%, #eab308 100%);
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;
@@ -216,7 +218,7 @@ header {
 .input-field:focus {
   border-color: var(--primary);
   background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+  box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
 }
 
 /* Buttons */
@@ -241,13 +243,15 @@ header {
 }
 
 .btn-primary {
-  background: linear-gradient(90deg, #f97316 0%, #eab308 100%);
-  color: #07060f;
-  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.25);
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 22px rgba(236, 72, 153, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .btn-primary:hover {
   filter: brightness(1.1);
+  box-shadow: 0 6px 28px rgba(236, 72, 153, 0.45);
 }
 
 .btn-secondary {

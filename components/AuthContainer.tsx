@@ -120,47 +120,33 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
       {screen === 'splash' && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '30px', margin: '40px 0' }}>
           
-          {/* Logo brillant orange style maquette */}
+          {/* Logo Officiel Goumin avec aura neon rose/violette */}
           <div style={{
             position: 'relative',
-            width: '90px',
-            height: '90px',
-            borderRadius: '24px',
-            background: 'rgba(255, 255, 255, 0.02)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            width: '110px',
+            height: '110px',
+            borderRadius: '28px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            boxShadow: '0 10px 30px rgba(249, 115, 22, 0.15)',
-            transform: 'rotate(15deg)',
-            marginBottom: '10px'
+            boxShadow: '0 15px 40px rgba(236, 72, 153, 0.35), 0 0 25px rgba(168, 85, 247, 0.25)',
+            marginBottom: '10px',
+            overflow: 'hidden',
+            border: '1px solid rgba(236, 72, 153, 0.35)'
           }}>
-            <div style={{ transform: 'rotate(-15deg)' }}>
-              <svg width="48" height="48" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M32 6C17.64 6 6 17.64 6 32C6 46.36 17.64 58 32 58C46.36 58 58 46.36 58 32" stroke="url(#logo-grad)" strokeWidth="6" strokeLinecap="round" />
-                <path d="M22 24C22 17 32 12 32 20C32 28 20 28 20 36C20 44 32 46 32 38" stroke="url(#logo-grad)" strokeWidth="6" strokeLinecap="round" />
-                <defs>
-                  <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#f97316" />
-                    <stop offset="100%" stopColor="#eab308" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <div style={{
-              position: 'absolute',
-              top: '4px',
-              left: '4px',
-              width: '100%',
-              height: '100%',
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 50%)',
-              borderRadius: '24px',
-              pointerEvents: 'none'
-            }} />
+            <img 
+              src="/images/icon.png" 
+              alt="Goumin Logo" 
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }} 
+            />
           </div>
 
           <div>
-            <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '32px', fontWeight: '800', background: 'linear-gradient(135deg, #f97316 0%, #eab308 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
+            <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '32px', fontWeight: '800', background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
               Goumin support
             </h1>
             <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6', marginTop: '12px', padding: '0 20px' }}>
