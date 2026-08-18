@@ -17,6 +17,7 @@ export default async function Page() {
   let proCount = 0;
   let waveBalance = 0;
   let omBalance = 0;
+  let chariowBalance = 0;
 
   try {
     const proRes = await db.query("SELECT COUNT(*) FROM users WHERE subscription_tier = 'pro'");
@@ -27,6 +28,9 @@ export default async function Page() {
 
     const omRes = await db.query("SELECT balance FROM merchant_balances WHERE id = 'sold_om'");
     if (omRes.rows.length > 0) omBalance = parseFloat(omRes.rows[0].balance);
+
+    const chariowRes = await db.query("SELECT balance FROM merchant_balances WHERE id = 'sold_chariow'");
+    if (chariowRes.rows.length > 0) chariowBalance = parseFloat(chariowRes.rows[0].balance);
   } catch (err) {
     console.error('Error fetching admin payment stats:', err);
   }
@@ -65,6 +69,7 @@ export default async function Page() {
         proCount={proCount}
         waveBalance={waveBalance}
         omBalance={omBalance}
+        chariowBalance={chariowBalance}
         transactions={transactions}
       />
     </AdminLayoutClient>

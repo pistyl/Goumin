@@ -134,7 +134,9 @@ export async function createPaymentRequest(
  * Crédite les soldes marchands séparés Wave et Orange Money
  */
 export async function creditMerchantBalance(method: string, amount: number) {
-  const balanceId = method === 'wave' ? 'sold_wave' : 'sold_om';
+  let balanceId = 'sold_wave';
+  if (method === 'om') balanceId = 'sold_om';
+  if (method === 'chariow') balanceId = 'sold_chariow';
   try {
     await db.query(
       `INSERT INTO merchant_balances (id, balance, updated_at) 

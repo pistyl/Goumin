@@ -19,10 +19,11 @@ interface PaymentsAdminClientProps {
   proCount: number;
   waveBalance: number;
   omBalance: number;
+  chariowBalance?: number;
   transactions: Transaction[];
 }
 
-export default function PaymentsAdminClient({ proCount, waveBalance, omBalance, transactions }: PaymentsAdminClientProps) {
+export default function PaymentsAdminClient({ proCount, waveBalance, omBalance, chariowBalance = 0, transactions }: PaymentsAdminClientProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleRelance = (id: string, username: string) => {
@@ -36,7 +37,7 @@ export default function PaymentsAdminClient({ proCount, waveBalance, omBalance, 
     });
   };
 
-  const totalBalance = waveBalance + omBalance;
+  const totalBalance = waveBalance + omBalance + chariowBalance;
   const mrr = proCount * 2000;
 
   return (
@@ -46,35 +47,41 @@ export default function PaymentsAdminClient({ proCount, waveBalance, omBalance, 
       <div>
         <h1 style={{ fontFamily: 'var(--font-title)', fontSize: '28px', fontWeight: '800' }}>Abonnements & Transactions</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '13.5px', marginTop: '4px' }}>
-          Suivi financier, transactions UnitechPay en temps réel et relances d'impayés.
+          Suivi financier, transactions Wave, Orange Money et Chariow en temps réel.
         </p>
       </div>
 
       {/* Stats Widgets Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '16px' }}>
         
         <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>ABONNÉS PRO ACTIFS</span>
-          <strong style={{ fontSize: '28px', color: '#fbbf24', fontFamily: 'var(--font-title)' }}>{proCount}</strong>
+          <strong style={{ fontSize: '28px', color: '#ec4899', fontFamily: 'var(--font-title)' }}>{proCount}</strong>
           <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>Mise à jour immédiate</span>
         </div>
 
         <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>REVENU MENSUEL ESTIMÉ (MRR)</span>
+          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>REVENU MENSUEL (MRR)</span>
           <strong style={{ fontSize: '28px', color: '#fff', fontFamily: 'var(--font-title)' }}>{mrr.toLocaleString()} FCFA</strong>
           <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>({proCount} × 2000 FCFA)</span>
         </div>
 
-        <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>SOLDE COMPTE WAVE</span>
+        <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '4px solid #60a5fa' }}>
+          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>SOLDE WAVE</span>
           <strong style={{ fontSize: '28px', color: '#60a5fa', fontFamily: 'var(--font-title)' }}>{waveBalance.toLocaleString()} FCFA</strong>
           <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>Revenus Wave cumulés</span>
         </div>
 
-        <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '4px solid #fb923c' }}>
           <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>SOLDE ORANGE MONEY</span>
           <strong style={{ fontSize: '28px', color: '#fb923c', fontFamily: 'var(--font-title)' }}>{omBalance.toLocaleString()} FCFA</strong>
           <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>Revenus OM cumulés</span>
+        </div>
+
+        <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '4px solid #a78bfa' }}>
+          <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: '600' }}>SOLDE CHARIOW</span>
+          <strong style={{ fontSize: '28px', color: '#a78bfa', fontFamily: 'var(--font-title)' }}>{chariowBalance.toLocaleString()} FCFA</strong>
+          <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>Revenus Chariow cumulés</span>
         </div>
 
       </div>
@@ -82,7 +89,7 @@ export default function PaymentsAdminClient({ proCount, waveBalance, omBalance, 
       {/* Transactions list card */}
       <div className="admin-card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: '800' }}>Historique UnitechPay</h3>
+          <h3 style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: '800' }}>Historique des Transactions</h3>
           <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Total: {transactions.length} transactions</span>
         </div>
 
@@ -108,19 +115,31 @@ export default function PaymentsAdminClient({ proCount, waveBalance, omBalance, 
                 </tr>
               ) : (
                 transactions.map((tx) => {
-                  const isOM = tx.payment_method.toLowerCase() === 'om' || tx.payment_method.toLowerCase() === 'orange_om';
+                  const methodLower = tx.payment_method.toLowerCase();
+                  const isChariow = methodLower === 'chariow';
+                  const isOM = methodLower === 'om' || methodLower === 'orange_om' || methodLower === 'orange';
                   const isFailed = tx.status === 'failed' || tx.status === 'expired' || tx.status === 'pending';
+
+                  let methodColor = '#60a5fa';
+                  let methodName = 'Wave';
+                  if (isChariow) {
+                    methodColor = '#a78bfa';
+                    methodName = 'Chariow';
+                  } else if (isOM) {
+                    methodColor = '#fb923c';
+                    methodName = 'Orange Money';
+                  }
 
                   return (
                     <tr key={tx.id}>
                       <td><strong>@{tx.username}</strong></td>
                       <td>
                         <span style={{
-                          color: isOM ? '#fb923c' : '#60a5fa',
+                          color: methodColor,
                           fontWeight: 'bold',
                           fontSize: '13px'
                         }}>
-                          {isOM ? 'Orange Money' : 'Wave'}
+                          {methodName}
                         </span>
                       </td>
                       <td style={{ fontFamily: 'monospace', fontSize: '12.5px', color: 'var(--text-muted)' }}>
