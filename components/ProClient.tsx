@@ -22,7 +22,7 @@ const CrownIcon = ({ className, size = 56 }: { className?: string; size?: number
     strokeLinecap="round" 
     strokeLinejoin="round" 
     className={className}
-    style={{ color: '#fbbf24' }}
+    style={{ color: '#ec4899' }}
   >
     <path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7z" />
     <path d="M5 20h14" />
@@ -30,14 +30,14 @@ const CrownIcon = ({ className, size = 56 }: { className?: string; size?: number
 );
 
 const BookOpenIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24' }}>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ec4899' }}>
     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
   </svg>
 );
 
 const ChartIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24' }}>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#a855f7' }}>
     <line x1="18" y1="20" x2="18" y2="10" />
     <line x1="12" y1="20" x2="12" y2="4" />
     <line x1="6" y1="20" x2="6" y2="14" />
@@ -45,14 +45,14 @@ const ChartIcon = () => (
 );
 
 const LockIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24' }}>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#f43f5e' }}>
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
 
 const ShieldIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24' }}>
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#a855f7' }}>
     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
   </svg>
 );
@@ -79,7 +79,7 @@ const CreditCardIcon = () => (
 );
 
 const SparklesIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#fbbf24', margin: '0 auto 14px' }}>
+  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#ec4899', margin: '0 auto 14px' }}>
     <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275Z" />
     <path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5Z" />
     <path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1Z" />
@@ -135,7 +135,7 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
     {
       icon: <ShieldIcon />,
       title: 'Badge officiel Pro',
-      desc: 'Affiche fièrement ton statut doré à côté de ton pseudo sur toute la plateforme.',
+      desc: 'Affiche fièrement ton statut brillant à côté de ton pseudo sur toute la plateforme.',
     },
   ];
 
@@ -145,8 +145,8 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
       {/* Styles CSS Injectés pour les animations et interactions fluides */}
       <style>{`
         @keyframes crownPulse {
-          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.4)); }
-          50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(251, 191, 36, 0.75)); }
+          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 12px rgba(236, 72, 153, 0.4)); }
+          50% { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(236, 72, 153, 0.75)); }
         }
         @keyframes pageSlideUp {
           from { opacity: 0; transform: translateY(20px); }
@@ -160,7 +160,7 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
         }
         .feature-card {
           background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(236, 72, 153, 0.12);
           border-radius: 20px;
           padding: 20px;
           transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -170,8 +170,8 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
         }
         .feature-card:hover {
           transform: translateY(-3px);
-          background: rgba(251, 191, 36, 0.025);
-          border-color: rgba(251, 191, 36, 0.25);
+          background: rgba(236, 72, 153, 0.04);
+          border-color: rgba(236, 72, 153, 0.3);
           box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
         .payment-tab {
@@ -191,24 +191,24 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
           transition: all 0.25s ease;
         }
         .payment-tab.wave.active {
-          border-color: #4f46e5;
-          background: rgba(79, 70, 229, 0.08);
+          border-color: #3b82f6;
+          background: rgba(59, 130, 246, 0.1);
           color: #fff;
-          box-shadow: 0 0 15px rgba(79, 70, 229, 0.25);
+          box-shadow: 0 0 18px rgba(59, 130, 246, 0.3);
         }
         .payment-tab.om.active {
-          border-color: #ea580c;
-          background: rgba(234, 88, 12, 0.08);
+          border-color: #f97316;
+          background: rgba(249, 115, 22, 0.1);
           color: #fff;
-          box-shadow: 0 0 15px rgba(234, 88, 12, 0.25);
+          box-shadow: 0 0 18px rgba(249, 115, 22, 0.3);
         }
         .payment-tab:hover:not(.active) {
           background: rgba(255, 255, 255, 0.05);
           color: #fff;
         }
         .pro-btn {
-          background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-          color: #07060f !important;
+          background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%);
+          color: #ffffff !important;
           font-weight: 800;
           padding: 16px;
           border: none;
@@ -216,7 +216,7 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
           cursor: pointer;
           font-size: 15px;
           transition: all 0.25s ease;
-          box-shadow: 0 8px 24px rgba(217, 119, 6, 0.35);
+          box-shadow: 0 8px 24px rgba(236, 72, 153, 0.35);
           display: flex;
           justify-content: center;
           align-items: center;
@@ -224,8 +224,8 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
         }
         .pro-btn:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 12px 30px rgba(217, 119, 6, 0.5);
-          filter: brightness(1.05);
+          box-shadow: 0 12px 30px rgba(236, 72, 153, 0.5);
+          filter: brightness(1.08);
         }
         .pro-btn:active:not(:disabled) {
           transform: translateY(0);
@@ -247,7 +247,7 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
             fontFamily: 'var(--font-title)', 
             fontSize: '32px', 
             fontWeight: '900', 
-            background: 'linear-gradient(135deg, #ffe082 0%, #fbbf24 50%, #d97706 100%)', 
+            background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)', 
             WebkitBackgroundClip: 'text', 
             WebkitTextFillColor: 'transparent',
             letterSpacing: '-0.5px'
@@ -263,19 +263,19 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
           /* Écran Pro Actif */
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div className="card animate-fade-in" style={{ 
-              border: '1px solid rgba(251, 191, 36, 0.3)', 
-              background: 'radial-gradient(circle at top right, rgba(251,191,36,0.06) 0%, rgba(255,255,255,0.01) 100%)', 
+              border: '1px solid rgba(236, 72, 153, 0.3)', 
+              background: 'radial-gradient(circle at top right, rgba(236, 72, 153, 0.08) 0%, rgba(168, 85, 247, 0.03) 100%)', 
               textAlign: 'center', 
               padding: '24px 20px',
               borderRadius: '24px',
               boxShadow: '0 15px 40px rgba(0,0,0,0.5)'
             }}>
               <SparklesIcon />
-              <strong style={{ fontSize: '20px', color: '#fbbf24', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-title)' }}>
+              <strong style={{ fontSize: '20px', color: '#ec4899', display: 'block', marginBottom: '6px', fontFamily: 'var(--font-title)' }}>
                 Accès Pro Activé !
               </strong>
               <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', lineHeight: '1.5', maxWidth: '340px', margin: '0 auto' }}>
-                Tu es désormais un membre pilier de la communauté Goumin. Merci pour ta générosité. 💛 Découvre tes contenus exclusifs ci-dessous.
+                Tu es désormais un membre pilier de la communauté Goumin. Merci pour ta générosité. 💖 Découvre tes contenus exclusifs ci-dessous.
               </p>
             </div>
 
@@ -389,12 +389,12 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
               background: 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.00) 100%)'
             }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', borderBottom: '1px solid var(--border-color)', paddingBottom: '14px' }}>
-                <span style={{ fontSize: '11px', color: '#fbbf24', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                <span style={{ fontSize: '11px', color: '#ec4899', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1px' }}>
                   Abonnement Mensuel
                 </span>
                 <h4 style={{ fontFamily: 'var(--font-title)', fontSize: '18px', fontWeight: '800', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                   Activer Goumin Pro
-                  <span style={{ fontSize: '15px', color: '#fbbf24', fontWeight: '900' }}>2000 FCFA <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal' }}>/ mois</span></span>
+                  <span style={{ fontSize: '15px', color: '#ec4899', fontWeight: '900' }}>2000 FCFA <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 'normal' }}>/ mois</span></span>
                 </h4>
               </div>
 
