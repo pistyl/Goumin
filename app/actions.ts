@@ -5,6 +5,7 @@ import { hashPassword, comparePassword, createSession, logout, getCurrentUser } 
 import { checkSensitiveContent, CRISIS_RESOURCES } from '@/lib/moderation';
 import { revalidatePath } from 'next/cache';
 import { createPaymentRequest } from '@/lib/unitechpay';
+import { createChariowPaymentRequest } from '@/lib/chariow';
 import { redirect } from 'next/navigation';
 
 // Authentification
@@ -357,8 +358,8 @@ export async function createPrivateCircleAction(name: string, description: strin
   }
 }
 
-// Souscription Pro
-export async function subscribeProAction(method: 'wave' | 'om', phone: string) {
+// Souscription Pro (Wave, Orange Money ou Chariow)
+export async function subscribeProAction(method: 'wave' | 'om' | 'chariow', phone: string) {
   const user = await getCurrentUser();
   if (!user) return { error: 'Non connecté.' };
 
@@ -367,7 +368,13 @@ export async function subscribeProAction(method: 'wave' | 'om', phone: string) {
   }
 
   try {
-    const res = await createPaymentRequest(user.id, method, phone);
+    let res;
+    if (method === 'chariow') {
+      res = await createChariowPaymentRequest(user.id, phone);
+    } else {
+      res = await createPaymentRequest(user.id, method, phone);
+    }
+
     if (res.success && res.payment_url) {
       return { success: true, paymentUrl: res.payment_url };
     } else {

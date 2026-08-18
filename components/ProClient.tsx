@@ -86,8 +86,16 @@ const SparklesIcon = () => (
   </svg>
 );
 
+const ChariowIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4 7C4 5.89543 4.89543 5 6 5H18C19.1046 5 20 5.89543 20 7V17C20 18.1046 19.1046 19 18 19H6C4.89543 19 4 18.1046 4 17V7Z" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" />
+    <path d="M4 10H20" stroke="#a78bfa" strokeWidth="2" />
+    <path d="M8 15H11" stroke="#34d399" strokeWidth="2" strokeLinecap="round" />
+  </svg>
+);
+
 export default function ProClient({ user, initialContents }: ProClientProps) {
-  const [method, setMethod] = useState<'wave' | 'om'>('wave');
+  const [method, setMethod] = useState<'wave' | 'om' | 'chariow'>('wave');
   const [phone, setPhone] = useState(user.identifier || '');
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -408,13 +416,14 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
               {/* Sélecteur de méthode de paiement visuel */}
               <div>
                 <label style={{ display: 'block', fontSize: '12.5px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>
-                  Opérateur Mobile Money :
+                  Opérateur Mobile Money / Carte :
                 </label>
-                <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                   <button
                     type="button"
                     onClick={() => setMethod('wave')}
                     className={`payment-tab wave ${method === 'wave' ? 'active' : ''}`}
+                    style={{ padding: '10px 4px', fontSize: '12px' }}
                   >
                     <WaveIcon />
                     Wave
@@ -423,9 +432,24 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
                     type="button"
                     onClick={() => setMethod('om')}
                     className={`payment-tab om ${method === 'om' ? 'active' : ''}`}
+                    style={{ padding: '10px 4px', fontSize: '12px' }}
                   >
                     <OrangeIcon />
-                    Orange Money
+                    Orange
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMethod('chariow')}
+                    className={`payment-tab om ${method === 'chariow' ? 'active' : ''}`}
+                    style={{
+                      padding: '10px 4px',
+                      fontSize: '12px',
+                      borderColor: method === 'chariow' ? '#8b5cf6' : undefined,
+                      background: method === 'chariow' ? 'rgba(139, 92, 246, 0.15)' : undefined
+                    }}
+                  >
+                    <ChariowIcon />
+                    Chariow
                   </button>
                 </div>
               </div>
@@ -457,20 +481,20 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
                       borderTopColor: '#07060f', 
                       borderRadius: '50%', 
                       display: 'inline-block',
-                      animation: 'pulse-sos 1s infinite linear' // reuse pulse animation as a loader
+                      animation: 'pulse-sos 1s infinite linear'
                     }} />
                     Initialisation...
                   </>
                 ) : (
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <CreditCardIcon />
-                    <span>S'abonner via {method === 'wave' ? 'Wave' : 'Orange Money'}</span>
+                    <span>S'abonner via {method === 'wave' ? 'Wave' : method === 'om' ? 'Orange Money' : 'Chariow'}</span>
                   </div>
                 )}
               </button>
               
               <p style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', lineHeight: '1.5' }}>
-                Abonnement sans engagement. Résiliable en 1 clic dans ton profil. Transaction sécurisée cryptée par UnitechPay.
+                Abonnement sans engagement. Résiliable en 1 clic dans ton profil. Transaction sécurisée cryptée par UnitechPay & Chariow.
               </p>
             </form>
           </>

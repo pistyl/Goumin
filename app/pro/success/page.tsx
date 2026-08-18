@@ -91,7 +91,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span style={{ color: 'var(--text-muted)' }}>Opérateur :</span>
-          <strong style={{ textTransform: 'uppercase' }}>{method === 'om' ? 'Orange Money' : 'Wave'}</strong>
+          <strong style={{ textTransform: 'uppercase' }}>{method === 'om' ? 'Orange Money' : method === 'chariow' ? 'Chariow' : 'Wave'}</strong>
         </div>
       </div>
 
