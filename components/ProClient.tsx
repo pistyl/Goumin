@@ -413,7 +413,7 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
                 </div>
               )}
 
-              {/* Sélecteur de méthode de paiement visuel */}
+              {/* Sélecteur de méthode de paiement visuel avec vrais logos */}
               <div>
                 <label style={{ display: 'block', fontSize: '12.5px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: '600' }}>
                   Opérateur Mobile Money / Carte :
@@ -423,33 +423,65 @@ export default function ProClient({ user, initialContents }: ProClientProps) {
                     type="button"
                     onClick={() => setMethod('wave')}
                     className={`payment-tab wave ${method === 'wave' ? 'active' : ''}`}
-                    style={{ padding: '10px 4px', fontSize: '12px' }}
+                    style={{
+                      padding: '12px 6px',
+                      fontSize: '12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
                   >
-                    <WaveIcon />
-                    Wave
+                    <img 
+                      src="/images/logo_wave.png" 
+                      alt="Wave" 
+                      style={{ width: '28px', height: '28px', borderRadius: '8px', objectFit: 'cover' }} 
+                    />
+                    <span>Wave</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => setMethod('om')}
                     className={`payment-tab om ${method === 'om' ? 'active' : ''}`}
-                    style={{ padding: '10px 4px', fontSize: '12px' }}
+                    style={{
+                      padding: '12px 6px',
+                      fontSize: '12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}
                   >
-                    <OrangeIcon />
-                    Orange
+                    <img 
+                      src="/images/logo_orange.png" 
+                      alt="Orange Money" 
+                      style={{ width: '28px', height: '28px', borderRadius: '8px', objectFit: 'contain' }} 
+                    />
+                    <span>Orange</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => setMethod('chariow')}
-                    className={`payment-tab om ${method === 'chariow' ? 'active' : ''}`}
+                    className={`payment-tab ${method === 'chariow' ? 'active' : ''}`}
                     style={{
-                      padding: '10px 4px',
+                      padding: '12px 6px',
                       fontSize: '12px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '6px',
                       borderColor: method === 'chariow' ? '#8b5cf6' : undefined,
                       background: method === 'chariow' ? 'rgba(139, 92, 246, 0.15)' : undefined
                     }}
                   >
-                    <ChariowIcon />
-                    Chariow
+                    <img 
+                      src="/images/logo_chariow.png" 
+                      alt="Chariow" 
+                      style={{ width: '28px', height: '28px', borderRadius: '8px', objectFit: 'contain', background: '#ffffff', padding: '2px' }} 
+                    />
+                    <span>Chariow</span>
                   </button>
                 </div>
               </div>
