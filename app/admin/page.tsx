@@ -248,8 +248,8 @@ export default async function Page() {
               <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} style={{ width: '100%', height: '180px', overflow: 'visible' }}>
                 <defs>
                   <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
+                    <stop offset="0%" stopColor="#ec4899" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#ec4899" stopOpacity="0" />
                   </linearGradient>
                 </defs>
                 
@@ -267,7 +267,7 @@ export default async function Page() {
                 {/* Line path */}
                 <polyline
                   fill="none"
-                  stroke="#fbbf24"
+                  stroke="#ec4899"
                   strokeWidth="3"
                   points={points}
                 />
@@ -278,7 +278,7 @@ export default async function Page() {
                   const y = chartHeight - (d.count / maxCount) * chartHeight;
                   return (
                     <g key={i}>
-                      <circle cx={x} cy={y} r="5" fill="#0b0a11" stroke="#fbbf24" strokeWidth="2.5" />
+                      <circle cx={x} cy={y} r="5" fill="#070611" stroke="#ec4899" strokeWidth="2.5" />
                       <text x={x} y={y - 12} fill="#fff" fontSize="10" fontWeight="bold" textAnchor="middle">
                         {d.count}
                       </text>
@@ -299,13 +299,13 @@ export default async function Page() {
           </div>
 
           {/* Revenue card */}
-          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'center', background: 'radial-gradient(circle at top right, rgba(251,191,36,0.04) 0%, rgba(255,255,255,0.01) 100%)', border: '1px solid rgba(251,191,36,0.12)' }}>
+          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px', justifyContent: 'center', background: 'radial-gradient(circle at top right, rgba(236,72,153,0.08) 0%, rgba(168,85,247,0.03) 100%)', border: '1px solid rgba(236,72,153,0.18)' }}>
             <div style={{ textAlign: 'center' }}>
-              <span style={{ fontSize: '11px', color: '#fbbf24', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1.2px' }}>
+              <span style={{ fontSize: '11px', color: '#ec4899', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '1.2px' }}>
                 Revenus Récurrents
               </span>
               <h3 style={{ fontSize: '38px', fontWeight: '900', color: '#fff', marginTop: '8px', fontFamily: 'var(--font-title)' }}>
-                {stats.mrr.toLocaleString('fr-FR')} <span style={{ fontSize: '18px', color: '#fbbf24', fontWeight: '700' }}>FCFA</span>
+                {stats.mrr.toLocaleString('fr-FR')} <span style={{ fontSize: '18px', color: '#ec4899', fontWeight: '700' }}>FCFA</span>
               </h3>
               <p style={{ color: 'var(--text-muted)', fontSize: '12.5px', marginTop: '6px', lineHeight: '1.4' }}>
                 Estimé sur la base de {stats.proUsers} abonnements Goumin Pro actifs à 2000 FCFA/mois.
@@ -319,7 +319,7 @@ export default async function Page() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Membres Pro actifs :</span>
-                <span style={{ fontWeight: 'bold', color: '#fbbf24' }}>{stats.proUsers} abonnés</span>
+                <span style={{ fontWeight: 'bold', color: '#ec4899' }}>{stats.proUsers} abonnés</span>
               </div>
             </div>
           </div>

@@ -80,15 +80,14 @@ export default function AdminLayoutClient({ children, adminUsername }: AdminLayo
     }
   ];
 
-  return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#0b0a11', fontFamily: 'var(--font-sans)', color: '#f3f4f6', width: '100%' }}>
+  return (    <div style={{ display: 'flex', minHeight: '100vh', background: '#070611', fontFamily: 'var(--font-sans)', color: '#f3f4f6', width: '100%' }}>
       
       {/* Styles globaux pour le tableau de bord admin */}
       <style>{`
         .admin-sidebar {
           width: 260px;
-          background: #0f0d1a;
-          border-right: 1px solid rgba(255, 255, 255, 0.05);
+          background: #0c0a18;
+          border-right: 1px solid rgba(236, 72, 153, 0.12);
           display: flex;
           flex-direction: column;
           padding: 24px;
@@ -111,12 +110,13 @@ export default function AdminLayoutClient({ children, adminUsername }: AdminLayo
         }
         .admin-menu-item:hover {
           color: #fff;
-          background: rgba(255, 255, 255, 0.03);
+          background: rgba(255, 255, 255, 0.04);
         }
         .admin-menu-item.active {
           color: #fff;
-          background: linear-gradient(135deg, rgba(249, 115, 22, 0.15) 0%, rgba(234, 179, 8, 0.1) 100%);
-          border: 1px solid rgba(249, 115, 22, 0.25);
+          background: linear-gradient(135deg, rgba(236, 72, 153, 0.18) 0%, rgba(168, 85, 247, 0.12) 100%);
+          border: 1px solid rgba(236, 72, 153, 0.3);
+          box-shadow: 0 0 15px rgba(236, 72, 153, 0.15);
         }
         .admin-content {
           flex: 1;
@@ -126,7 +126,7 @@ export default function AdminLayoutClient({ children, adminUsername }: AdminLayo
         }
         .admin-card {
           background: rgba(255, 255, 255, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(236, 72, 153, 0.1);
           border-radius: 20px;
           padding: 24px;
         }
@@ -159,10 +159,11 @@ export default function AdminLayoutClient({ children, adminUsername }: AdminLayo
           transition: border-color 0.2s ease;
         }
         .admin-input:focus {
-          border-color: var(--primary);
+          border-color: #ec4899;
+          box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
         }
         .admin-btn {
-          background: linear-gradient(135deg, #f97316 0%, #eab308 100%);
+          background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%);
           border: none;
           color: #fff;
           font-weight: 700;
@@ -173,10 +174,12 @@ export default function AdminLayoutClient({ children, adminUsername }: AdminLayo
           display: inline-flex;
           align-items: center;
           gap: 6px;
-          transition: filter 0.2s ease;
+          transition: all 0.2s ease;
+          box-shadow: 0 4px 18px rgba(236, 72, 153, 0.3);
         }
         .admin-btn:hover {
           filter: brightness(1.1);
+          box-shadow: 0 6px 22px rgba(236, 72, 153, 0.45);
         }
         .admin-badge {
           font-size: 10px;
@@ -188,7 +191,7 @@ export default function AdminLayoutClient({ children, adminUsername }: AdminLayo
         .admin-badge.active { background: rgba(16, 185, 129, 0.1); color: #10b981; }
         .admin-badge.suspended { background: rgba(251, 146, 60, 0.1); color: #fb923c; }
         .admin-badge.banned { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
-        .admin-badge.pro { background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(217, 119, 6, 0.1) 100%); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.2); }
+        .admin-badge.pro { background: linear-gradient(135deg, rgba(236, 72, 153, 0.18) 0%, rgba(168, 85, 247, 0.12) 100%); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.3); }
         .admin-badge.simple { background: rgba(255, 255, 255, 0.05); color: rgba(255, 255, 255, 0.5); }
         
         @media (max-width: 900px) {
@@ -216,7 +219,7 @@ export default function AdminLayoutClient({ children, adminUsername }: AdminLayo
       }} className="mobile-toggle-btn">
         <button 
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          style={{ background: '#0f0d1a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '10px', color: '#fff', cursor: 'pointer' }}
+          style={{ background: '#0c0a18', border: '1px solid rgba(236, 72, 153, 0.2)', borderRadius: '10px', padding: '10px', color: '#fff', cursor: 'pointer' }}
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="3" y1="12" x2="21" y2="12" />
@@ -228,21 +231,26 @@ export default function AdminLayoutClient({ children, adminUsername }: AdminLayo
 
       {/* Sidebar */}
       <aside className="admin-sidebar">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '32px' }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #f97316 0%, #eab308 100%)',
-            width: '32px',
-            height: '32px',
-            borderRadius: '10px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 'bold',
-            color: '#fff'
-          }}>
-            G
-          </div>
-          <strong style={{ fontSize: '18px', fontWeight: '800', fontFamily: 'var(--font-title)' }}>Goumin Admin</strong>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
+          <img 
+            src="/images/icon.png" 
+            alt="Goumin Logo" 
+            style={{
+              width: '34px',
+              height: '34px',
+              borderRadius: '10px',
+              objectFit: 'cover',
+              boxShadow: '0 0 12px rgba(236, 72, 153, 0.4)'
+            }} 
+          />
+          <strong style={{ 
+            fontSize: '18px', 
+            fontWeight: '800', 
+            fontFamily: 'var(--font-title)',
+            background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>Goumin Admin</strong>
         </div>
 
         <nav style={{ flex: 1 }}>
