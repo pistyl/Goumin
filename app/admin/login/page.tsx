@@ -37,7 +37,7 @@ export default async function Page({ searchParams }: { searchParams: { error?: s
             fontFamily: 'var(--font-title)',
             fontSize: '28px',
             fontWeight: '900',
-            background: 'linear-gradient(135deg, #f97316 0%, #eab308 100%)',
+            background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             letterSpacing: '-0.5px',
@@ -114,7 +114,7 @@ export default async function Page({ searchParams }: { searchParams: { error?: s
           <button
             type="submit"
             style={{
-              background: 'linear-gradient(135deg, #f97316 0%, #eab308 100%)',
+              background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)',
               color: '#fff',
               border: 'none',
               borderRadius: '12px',
@@ -123,7 +123,7 @@ export default async function Page({ searchParams }: { searchParams: { error?: s
               fontWeight: '700',
               cursor: 'pointer',
               marginTop: '10px',
-              boxShadow: '0 8px 24px rgba(249, 115, 22, 0.25)',
+              boxShadow: '0 8px 24px rgba(236, 72, 153, 0.3)',
               transition: 'all 0.25s ease'
             }}
           >

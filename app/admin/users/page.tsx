@@ -71,9 +71,21 @@ export default async function Page({ searchParams }: { searchParams: { search?: 
     console.error('Error fetching admin users:', err);
   }
 
+  // Query overall user counts
+  let stats = { total: 0, free: 0, pro: 0 };
+  try {
+    const totalRes = await db.query(`SELECT COUNT(*) FROM users`);
+    const proRes = await db.query(`SELECT COUNT(*) FROM users WHERE subscription_tier = 'pro'`);
+    const total = parseInt(totalRes.rows[0].count);
+    const pro = parseInt(proRes.rows[0].count);
+    stats = { total, pro, free: Math.max(0, total - pro) };
+  } catch (e) {
+    console.error('Error fetching user count stats:', e);
+  }
+
   return (
     <AdminLayoutClient adminUsername={admin.username}>
-      <UsersAdminClient initialUsers={users} search={search} />
+      <UsersAdminClient initialUsers={users} search={search} stats={stats} />
     </AdminLayoutClient>
   );
 }

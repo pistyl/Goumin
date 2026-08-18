@@ -31,9 +31,14 @@ interface User {
 interface UsersAdminClientProps {
   initialUsers: User[];
   search: string;
+  stats?: {
+    total: number;
+    free: number;
+    pro: number;
+  };
 }
 
-export default function UsersAdminClient({ initialUsers, search }: UsersAdminClientProps) {
+export default function UsersAdminClient({ initialUsers, search, stats }: UsersAdminClientProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [searchVal, setSearchVal] = useState(search);
@@ -113,6 +118,35 @@ export default function UsersAdminClient({ initialUsers, search }: UsersAdminCli
           Recherche, examine les profils et gère les droits d'accès des membres de Goumin.
         </p>
       </div>
+
+      {/* Cartes de statistiques Utilisateurs */}
+      {stats && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+          <div className="admin-card" style={{ borderLeft: '4px solid #3b82f6', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>TOTAL UTILISATEURS</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <strong style={{ fontSize: '28px', fontWeight: '800', color: '#fff' }}>{stats.total}</strong>
+              <span style={{ fontSize: '12px', color: '#60a5fa' }}>membres inscrits</span>
+            </div>
+          </div>
+
+          <div className="admin-card" style={{ borderLeft: '4px solid #94a3b8', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>UTILISATEURS SIMPLES (GRATUITS)</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <strong style={{ fontSize: '28px', fontWeight: '800', color: '#fff' }}>{stats.free}</strong>
+              <span style={{ fontSize: '12px', color: '#94a3b8' }}>membres gratuits</span>
+            </div>
+          </div>
+
+          <div className="admin-card" style={{ borderLeft: '4px solid #ec4899', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>MEMBRES PRO</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <strong style={{ fontSize: '28px', fontWeight: '800', color: '#ec4899' }}>{stats.pro}</strong>
+              <span style={{ fontSize: '12px', color: '#ec4899' }}>abonnés payants</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Search Bar */}
       <form onSubmit={handleSearch} style={{ display: 'flex', gap: '12px' }}>

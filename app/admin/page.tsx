@@ -177,39 +177,55 @@ export default async function Page() {
         )}
 
         {/* Metrics Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '16px' }}>
           
-          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>NOUVEAUX UTILISATEURS (7J)</span>
+          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '4px solid #3b82f6' }}>
+            <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '700' }}>TOTAL UTILISATEURS</span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-              <strong style={{ fontSize: '32px', fontWeight: '800', color: '#fff' }}>{stats.newUsers7d}</strong>
-              <span style={{ fontSize: '12px', color: '#10b981' }}>+ nouveaux</span>
+              <strong style={{ fontSize: '30px', fontWeight: '800', color: '#fff' }}>{stats.totalUsers}</strong>
+              <span style={{ fontSize: '12px', color: '#60a5fa' }}>membres inscrits</span>
+            </div>
+          </div>
+
+          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '4px solid #94a3b8' }}>
+            <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '700' }}>UTILISATEURS SIMPLES</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <strong style={{ fontSize: '30px', fontWeight: '800', color: '#fff' }}>{Math.max(0, stats.totalUsers - stats.proUsers)}</strong>
+              <span style={{ fontSize: '12px', color: '#94a3b8' }}>comptes gratuits</span>
+            </div>
+          </div>
+
+          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '4px solid #ec4899' }}>
+            <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '700' }}>MEMBRES PRO</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <strong style={{ fontSize: '30px', fontWeight: '800', color: '#ec4899' }}>{stats.proUsers}</strong>
+              <span style={{ fontSize: '12px', color: '#ec4899' }}>abonnés payants</span>
+            </div>
+          </div>
+
+          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderLeft: '4px solid #a855f7' }}>
+            <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '700' }}>TAUX CONVERSION PRO</span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+              <strong style={{ fontSize: '30px', fontWeight: '800', color: '#a855f7' }}>{conversionRate}%</strong>
+              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>({stats.proUsers} / {stats.totalUsers})</span>
             </div>
           </div>
 
           <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>PUBLICATIONS CRÉÉES (7J)</span>
+            <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '700' }}>PUBLICATIONS (7J)</span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-              <strong style={{ fontSize: '32px', fontWeight: '800', color: '#fff' }}>{stats.newPosts7d}</strong>
-              <span style={{ fontSize: '12px', color: '#10b981' }}>+ partages</span>
+              <strong style={{ fontSize: '30px', fontWeight: '800', color: '#fff' }}>{stats.newPosts7d}</strong>
+              <span style={{ fontSize: '12px', color: '#10b981' }}>partages</span>
             </div>
           </div>
 
           <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>SIGNALEMENTS EN ATTENTE</span>
+            <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', fontWeight: '700' }}>SIGNALEMENTS</span>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-              <strong style={{ fontSize: '32px', fontWeight: '800', color: stats.pendingReports > 0 ? '#f87171' : '#fff' }}>
+              <strong style={{ fontSize: '30px', fontWeight: '800', color: stats.pendingReports > 0 ? '#f87171' : '#fff' }}>
                 {stats.pendingReports}
               </strong>
               {stats.pendingReports > 0 && <span style={{ fontSize: '12px', color: '#ef4444' }}>à traiter</span>}
-            </div>
-          </div>
-
-          <div className="admin-card" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>TAUX DE CONVERSION PRO</span>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-              <strong style={{ fontSize: '32px', fontWeight: '800', color: '#fbbf24' }}>{conversionRate}%</strong>
-              <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.4)' }}>({stats.proUsers} / {stats.totalUsers})</span>
             </div>
           </div>
 
