@@ -58,12 +58,12 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', textAlign: 'center', padding: '40px 10px' }}>
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block', margin: '0 auto 12px auto', filter: 'drop-shadow(0 0 10px rgba(251,191,36,0.3))' }}>
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#ec4899" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ display: 'block', margin: '0 auto 12px auto', filter: 'drop-shadow(0 0 12px rgba(236,72,153,0.4))' }}>
         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
       </svg>
       
       <div>
-        <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '26px', fontWeight: '800', color: '#fbbf24', marginBottom: '8px' }}>
+        <h2 style={{ fontFamily: 'var(--font-title)', fontSize: '26px', fontWeight: '800', color: '#ec4899', marginBottom: '8px' }}>
           Paiement réussi !
         </h2>
         <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.6' }}>

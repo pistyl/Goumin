@@ -444,7 +444,7 @@ export default function AuthContainer({ circles }: AuthContainerProps) {
           {/* ÉTAPE 2: CHOIX DES CERCLES */}
           <div style={{ display: screen === 'signup_circles' ? 'flex' : 'none', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)', padding: '10px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-              <span style={{ fontSize: '12px', color: '#fbbf24', fontWeight: 'bold' }}>🌓 Étape finale : Cercles d'entraide</span>
+              <span style={{ fontSize: '12px', color: '#ec4899', fontWeight: 'bold' }}>🌓 Étape finale : Cercles d'entraide</span>
               <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Choisis tes cercles</span>
             </div>
 

@@ -253,7 +253,7 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
             {post.is_anonym ? 'Anonyme' : post.username}
           </span>
           {!post.is_anonym && post.subscription_tier === 'pro' && (
-            <span style={{ fontSize: '10px', background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', color: '#000', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>PRO</span>
+            <span style={{ fontSize: '10px', background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)', color: '#fff', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>PRO</span>
           )}
           <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>• {formatTimeAgo(post.created_at)}</span>
         </div>
@@ -366,7 +366,7 @@ export default function PostDetailClient({ user, post, comments }: PostDetailCli
                       {comment.username}
                     </span>
                     {comment.subscription_tier === 'pro' && (
-                      <span style={{ fontSize: '8px', background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', color: '#000', padding: '1px 3px', borderRadius: '3px', fontWeight: 'bold' }}>PRO</span>
+                      <span style={{ fontSize: '8px', background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)', color: '#fff', padding: '1px 3px', borderRadius: '3px', fontWeight: 'bold' }}>PRO</span>
                     )}
                     <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{formatTimeAgo(comment.created_at)}</span>
                   </div>

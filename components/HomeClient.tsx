@@ -4,6 +4,7 @@ import React, { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { createPostAction, toggleReactionAction, createPrivateCircleAction, reportContentAction } from '@/app/actions';
 import { User } from '@/lib/auth';
+import PwaInstallButton from './PwaInstallButton';
 
 interface Post {
   id: string;
@@ -242,6 +243,9 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
         </div>
       )}
 
+      {/* Bannière d'invitation à l'installation PWA */}
+      <PwaInstallButton variant="banner" />
+
       {/* Bannière d'accueil chaleureuse */}
       <div className="card" style={{
         background: 'linear-gradient(135deg, rgba(129,140,248,0.08) 0%, rgba(236,72,153,0.04) 100%)',
@@ -446,11 +450,11 @@ export default function HomeClient({ user, circles, posts }: HomeClientProps) {
                       {post.is_anonym ? 'Anonyme' : post.username}
                     </span>
                     {!post.is_anonym && post.subscription_tier === 'pro' && (
-                      <span style={{ fontSize: '10px', background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', color: '#000', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>PRO</span>
+                      <span style={{ fontSize: '10px', background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)', color: '#fff', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>PRO</span>
                     )}
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>• {formatTimeAgo(post.created_at)}</span>
                     {(post as any).is_pinned && (
-                      <span style={{ fontSize: '9px', background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)', color: '#000', padding: '1px 5px', borderRadius: '4px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      <span style={{ fontSize: '9px', background: 'linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%)', color: '#fff', padding: '1px 5px', borderRadius: '4px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                         📌 Épinglé
                       </span>
                     )}

@@ -6,6 +6,7 @@ import { updateStepAction, updateSettingsAction, logoutAction } from '@/app/acti
 import { User } from '@/lib/auth';
 import { getMoonIcon } from './AppWrapper';
 import PhoneInputWithCountry from './PhoneInputWithCountry';
+import PwaInstallButton from './PwaInstallButton';
 
 interface ProfileClientProps {
   user: User;
@@ -270,7 +271,7 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
                 opacity: badge.unlocked ? 1 : 0.4
               }}
             >
-              <span style={{ display: 'flex', alignItems: 'center', fontSize: '26px', color: badge.unlocked ? (badge.proOnly ? '#fbbf24' : 'var(--primary)') : 'var(--text-muted)' }}>
+              <span style={{ display: 'flex', alignItems: 'center', fontSize: '26px', color: badge.unlocked ? (badge.proOnly ? '#ec4899' : 'var(--primary)') : 'var(--text-muted)' }}>
                 {badge.unlocked ? getBadgeIcon(badge.id, 24) : getLockIcon(24)}
               </span>
               <div style={{ flex: 1 }}>
@@ -279,7 +280,7 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
                     {badge.name}
                   </strong>
                   {badge.proOnly && (
-                    <span style={{ fontSize: '9px', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>PRO</span>
+                    <span style={{ fontSize: '9px', background: 'rgba(236,72,153,0.15)', color: '#ec4899', padding: '1px 4px', borderRadius: '4px', fontWeight: 'bold' }}>PRO</span>
                   )}
                 </div>
                 <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{badge.desc}</span>
@@ -288,6 +289,9 @@ export default function ProfileClient({ user, stats }: ProfileClientProps) {
           ))}
         </div>
       </div>
+
+      {/* Application Mobile & PWA */}
+      <PwaInstallButton variant="card" />
 
       {/* Paramètres & Config du contact de confiance */}
       <div className="card">

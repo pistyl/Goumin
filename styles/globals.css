@@ -265,9 +265,10 @@ header {
 }
 
 .btn-pro {
-  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
-  color: #000;
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%);
+  color: #fff;
   font-weight: 700;
+  box-shadow: 0 4px 18px rgba(236, 72, 153, 0.35);
 }
 
 /* Custom Scrollbar */
@@ -373,4 +374,25 @@ header {
   opacity: 0.8;
 }
 
+/* PWA Install UI Styles */
+.pwa-header-btn:hover {
+  background: linear-gradient(135deg, rgba(244, 63, 94, 0.35) 0%, rgba(168, 85, 247, 0.4) 100%) !important;
+  border-color: rgba(236, 72, 153, 0.7) !important;
+  box-shadow: 0 0 16px rgba(236, 72, 153, 0.45) !important;
+  transform: translateY(-1px);
+}
 
+.pwa-header-btn:active {
+  transform: scale(0.96) !important;
+}
+
+.pwa-feed-banner:hover {
+  border-color: rgba(236, 72, 153, 0.5) !important;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 360px) {
+  .pwa-header-btn-text {
+    display: none;
+  }
+}

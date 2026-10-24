@@ -196,7 +196,7 @@ export default function JournalClient({ user, entries, dailyPrompt }: JournalCli
             {errorMessage === 'limit_reached' ? (
               <div>
                 <span>{errorMessage}</span>
-                <a href="/pro" style={{ color: '#fbbf24', fontWeight: 'bold', marginLeft: '6px', textDecoration: 'underline' }}>Passer en Pro</a>
+                <a href="/pro" style={{ color: '#ec4899', fontWeight: 'bold', marginLeft: '6px', textDecoration: 'underline' }}>Passer en Pro</a>
               </div>
             ) : (
               errorMessage
@@ -260,7 +260,7 @@ export default function JournalClient({ user, entries, dailyPrompt }: JournalCli
             Courbe émotionnelle
           </span>
           {!isPro && (
-            <span style={{ fontSize: '9px', background: 'rgba(251,191,36,0.1)', color: '#fbbf24', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>PRO</span>
+            <span style={{ fontSize: '9px', background: 'rgba(236, 72, 153, 0.15)', color: '#ec4899', padding: '2px 8px', borderRadius: '10px', fontWeight: 'bold' }}>PRO</span>
           )}
         </h4>
 
@@ -429,7 +429,7 @@ export default function JournalClient({ user, entries, dailyPrompt }: JournalCli
                       <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>
                         En mode gratuit, l'historique est limité à 7 jours.
                       </p>
-                      <a href="/pro" style={{ color: '#fbbf24', fontSize: '12px', fontWeight: 'bold', textDecoration: 'none' }}>
+                      <a href="/pro" style={{ color: '#ec4899', fontSize: '12px', fontWeight: 'bold', textDecoration: 'none' }}>
                         Débloquer avec le Mode Pro 👑
                       </a>
                     </div>

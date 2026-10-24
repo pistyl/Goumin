@@ -3,11 +3,19 @@
   "short_name": "Goumin",
   "description": "Espace de soutien émotionnel et d'entraide entre pairs pour surmonter le chagrin d'amour.",
   "start_url": "/",
+  "id": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0a0915",
   "theme_color": "#0a0915",
   "orientation": "portrait",
   "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "/icon.png",
       "sizes": "512x512",
